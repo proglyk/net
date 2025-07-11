@@ -21,7 +21,7 @@ typedef struct {
   bool         bEnabled;
   // Поля только для клиента
   u32_t        ulId;
-  u8_t        *pcRmt;
+  const u8_t  *pcRmt;
   // ПОля только для сервера
   // ...
 } net_init_t;

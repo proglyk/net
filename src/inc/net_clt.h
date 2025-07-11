@@ -1,7 +1,7 @@
 #ifndef _NET_CLT_H_
 #define _NET_CLT_H_
 
-#include "config_proj.h"
+#include "proj_conf.h"
 #include "net_if.h"
 #include "net_sess.h"
 #include "lwip/sockets.h"
@@ -9,14 +9,15 @@
 
 typedef struct {  
   // внутренние
-  struct sockaddr_in remote;
-  u8_t acName[16];
-  s32_t ulSockType;
-  bool bEnable;
+  struct      sockaddr_in remote;
+  u8_t        acName[16];
+  s32_t       ulSockType;
+  bool        bEnable;
   // интерфейсные
-  u32_t ulId;
-  u32_t ulPort; //remote
-  ip_addr_t xIpRmt;
+  u32_t       ulId;
+  u32_t       ulPort; //remote
+  ip_addr_t   xIpRmt;
+  const u8_t *pcIpRmt;
   //ip_addr_t xIpAddr; //my ip
   // переменные на программный стек клиента.
   // один стек - один сервер - одно подключение (один удаленный сервер)

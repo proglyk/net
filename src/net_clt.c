@@ -89,18 +89,18 @@ static void
                             &(ctx->xRmtSrv.handle) );
           if (rc != pdPASS ) {
             status = -1;
-            LWIP_DEBUGF( NET_DEBUG, ("Can't create \"%s\", in '%s' /NET/net_clt.c:%d\r\n", 
+            LWIP_DEBUGF( NET_DEBUG, ("%s can't create sess task, in '%s' /NET/net_clt.c:%d\r\n", 
               ctx->acName, __FUNCTION__, __LINE__) );
             break;
           }
         } else {
-          LWIP_DEBUGF( NET_DEBUG, ("Can't connect to \"%s\", in '%s' /NET/net_clt.c:%d\r\n", 
-              ctx->acName, __FUNCTION__, __LINE__) );
+          LWIP_DEBUGF( NET_DEBUG, ("%s can't connect to %s, in %s /NET/net_clt.c:%d\r\n", 
+              ctx->acName, ctx->pcIpRmt, __FUNCTION__, __LINE__) );
         }
       }
     }
     // задержка перед новой попыткой подключиться
-    vTaskDelay(5000);
+    vTaskDelay(10000);
   } while (status == 0);
   
   return;

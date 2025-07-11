@@ -4,7 +4,7 @@
 #include "net_netif.h"
 #include "lwip/tcpip.h"
 #include "lwip/ip_addr.h"
-#include "config_proj.h"
+#include "proj_conf.h"
 
 // Прототипы локальных (static) функций
 
@@ -92,6 +92,7 @@ s32_t
                                          (SOCK_STREAM) : (SOCK_DGRAM);
   rc = ipaddr_aton( (const char *)pInit->pcRmt, 
 										&(pNet->xClt.axClients[pos].xIpRmt) );
+  pNet->xClt.axClients[pos].pcIpRmt = pInit->pcRmt;
   if (!rc) return -1;
   pNet->xClt.axClients[pos].ulPort = pInit->ulPort;
   // временно. только для sntp

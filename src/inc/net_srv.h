@@ -1,7 +1,7 @@
 #ifndef _NET_SRV_H_
 #define _NET_SRV_H_
 
-#include "config_proj.h"
+#include "proj_conf.h"
 #include "net_if.h"
 #include "net_sess.h"
 #include "lwip/sockets.h"

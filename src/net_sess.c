@@ -2,7 +2,7 @@
 #include "lwip/def.h"
 #include "lwip/sockets.h"
 #include <string.h>
-#include "config_proj.h"
+#include "proj_conf.h"
 #include "dbg.h"
 
 static int delete(sess_ctx_t *ctx, TaskHandle_t handle);

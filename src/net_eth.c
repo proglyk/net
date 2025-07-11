@@ -1,7 +1,7 @@
 #include "net_eth.h"
 #include "lwip/err.h"
 #include "string.h"
-#include "config_proj.h"
+#include "proj_conf.h"
 //#include "net_user.h"
 
 // Прототипы локальных (static) функций

@@ -3,7 +3,7 @@
 #include "lwip/dhcp.h"
 #include "netif/etharp.h"
 #include "string.h"
-#include "config_proj.h"
+#include "proj_conf.h"
 //#include "net_user.h"
 
 static void check_link( void * );

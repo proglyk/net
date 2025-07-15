@@ -48,49 +48,6 @@ net_eth_t *
 /**	----------------------------------------------------------------------------
 	* @brief  ??
 	* @param  ptr: ??? */
-static s32_t net_eth__init_1PHY(net_eth_t *);
-static s32_t
-  net_eth__init_1PHY(net_eth_t *ptr) {
-//s32_t
-//  net_eth__init(net_eth_t *ptr) {
-/*----------------------------------------------------------------------------*/
-  //ETH_HandleTypeDef *phandle;
-  //static HAL_StatusTypeDef rc;
-
-  /*if (!ptr) return -1;
-  phandle = (ETH_HandleTypeDef *)&(ptr->xHandle);
-	phandle->Instance = ETH;
-	phandle->Init.MACAddr = (uint8_t *)macaddress;
-	phandle->Init.AutoNegotiation = ETH_AUTONEGOTIATION_DISABLE;//ETH_AUTONEGOTIATION_ENABLE;
-	phandle->Init.Speed = ETH_SPEED_100M;
-	phandle->Init.DuplexMode = ETH_MODE_FULLDUPLEX;
-	phandle->Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;
-	phandle->Init.RxMode = ETH_RXINTERRUPT_MODE;
-	phandle->Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
-	phandle->Init.PhyAddress = addr;
-	rc = HAL_ETH_Init(phandle); // не смотрим на rc и не провер€ем выше
-  if (rc == HAL_OK) {
-    LWIP_DEBUGF( NET_DEBUG, ("PHY(addr=%01d) init...OK, in '%s' /NET/net_eth.c:%d\r\n", 
-      addr, __FUNCTION__, __LINE__) );
-  } else {
-    LWIP_DEBUGF( NET_DEBUG, ("PHY(addr=%01d) init...Err=%01d, in '%s' /NET/net_eth.c:%d\r\n", 
-      addr, rc, __FUNCTION__, __LINE__) );
-  }
-  // Initialize Tx,Rx Descriptors list: Chain Mode
-	HAL_ETH_DMATxDescListInit(phandle, DMATxDscrTab, &Tx_Buff[0][0], 
-		ETH_TXBUFNB);
-	HAL_ETH_DMARxDescListInit(phandle, DMARxDscrTab, &Rx_Buff[0][0], 
-		ETH_RXBUFNB);*/
-  
-  return 0;
-}
-
-//static s32_t net_eth__init_KSZ8823(net_eth_t *);
-//static s32_t
-//net_eth__init_KSZ8823(net_eth_t *ptr) {
-/**	----------------------------------------------------------------------------
-	* @brief  ??
-	* @param  ptr: ??? */
 s32_t
   net_eth__init(net_eth_t *ptr) {
 /*----------------------------------------------------------------------------*/
@@ -141,22 +98,6 @@ s32_t
   return rc == HAL_OK ? 0 : -1;
 }
 
-static s32_t net_eth__is_link_up(net_eth_t *, bool *);
-/**	----------------------------------------------------------------------------
-	* @brief  ??
-	* @param  ptr: ??? */
-static s32_t
-  net_eth__is_link_up(net_eth_t *px, bool *sta) {
-/*----------------------------------------------------------------------------*/
-  //u32_t reg;
-  
-  /*if ( HAL_ETH_ReadPHYRegister(&(px->xHandle), PHY_BSR, &reg) != HAL_OK )
-    return -1;
-  *sta = ((reg != 0xffff) && (reg & LAN8710_BSR_LINK_STATUS));*/
-  return 0;
-}
-
-//static s32_t net_eth__is_links_up(net_eth_t *, bool *);
 /**	----------------------------------------------------------------------------
 	* @brief  „тение статуса регистра BSR n-ного кол-ва интерфейсов PHY
 	* @param  ptr: ??? */

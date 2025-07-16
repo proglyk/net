@@ -5,7 +5,7 @@
 #include "lwip/netif.h"
 #include "stdbool.h"
 
-/*--Идентификаторы задач отслеживания линка RJ-45 и чтения входящих данных----*/
+/*--РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ Р·Р°РґР°С‡ РѕС‚СЃР»РµР¶РёРІР°РЅРёСЏ Р»РёРЅРєР° RJ-45 Рё С‡С‚РµРЅРёСЏ РІС…РѕРґСЏС‰РёС… РґР°РЅРЅС‹С…----*/
 
 typedef err_t (*input_ptr_t)(struct pbuf *p, void *pargv/*struct netif *inp*/);
 
@@ -14,7 +14,7 @@ typedef struct {
   ETH_HandleTypeDef xHandle;
 } net_eth_t;
 
-// Прототипы публичных (public) функций
+// РџСЂРѕС‚РѕС‚РёРїС‹ РїСѓР±Р»РёС‡РЅС‹С… (public) С„СѓРЅРєС†РёР№
 
 net_eth_t *net_eth__inst(void);
 s32_t net_eth__init(net_eth_t *);

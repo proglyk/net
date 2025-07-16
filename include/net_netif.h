@@ -46,14 +46,14 @@ typedef void (*netif_is_up_ptr_t)(bool);
 typedef struct {
   TaskHandle_t 			pvTaskLink;
   netif_is_up_ptr_t pvNetifCb;
-  // Способ присвоения IPv4 адреса устройству
+  // РЎРїРѕСЃРѕР± РїСЂРёСЃРІРѕРµРЅРёСЏ IPv4 Р°РґСЂРµСЃР° СѓСЃС‚СЂРѕР№СЃС‚РІСѓ
   ip_t xIp;
   SemaphoreHandle_t	pvSmphrInput;
   TaskHandle_t 			pvTaskInput;
   struct netif xNetif;
-  // клиент dhcp
+  // РєР»РёРµРЅС‚ dhcp
   clnt_dchp_t   xDhcp;
-  // аппаратный уровень
+  // Р°РїРїР°СЂР°С‚РЅС‹Р№ СѓСЂРѕРІРµРЅСЊ
   //net_eth_t       xEthif;
 } net_netif_t;
 

@@ -13,13 +13,13 @@ typedef enum {
 } srv_type_t;
 
 typedef struct {
-  // управление задачей
+  // СѓРїСЂР°РІР»РµРЅРёРµ Р·Р°РґР°С‡РµР№
 	TaskHandle_t handle;
   task_cb_fn_t pvDeleted;
   void *pvPld;
   bool bEnable;
-  bool bLatched;  // защелка только для случая неудачного вызова setup
-  // данные
+  bool bLatched;  // Р·Р°С‰РµР»РєР° С‚РѕР»СЊРєРѕ РґР»СЏ СЃР»СѓС‡Р°СЏ РЅРµСѓРґР°С‡РЅРѕРіРѕ РІС‹Р·РѕРІР° setup
+  // РґР°РЅРЅС‹Рµ
 	s32_t slSockServ;
   u32_t ulPort;
   //struct sockaddr_in remote;
@@ -27,8 +27,8 @@ typedef struct {
   int slTaskCounter;
   srv_type_t eType;
 
-  // переменные на программный стек сервера в целом.
-  // один стек - один сервер - много подключений (много удаленных клиентов)
+  // РїРµСЂРµРјРµРЅРЅС‹Рµ РЅР° РїСЂРѕРіСЂР°РјРјРЅС‹Р№ СЃС‚РµРє СЃРµСЂРІРµСЂР° РІ С†РµР»РѕРј.
+  // РѕРґРёРЅ СЃС‚РµРє - РѕРґРёРЅ СЃРµСЂРІРµСЂ - РјРЅРѕРіРѕ РїРѕРґРєР»СЋС‡РµРЅРёР№ (РјРЅРѕРіРѕ СѓРґР°Р»РµРЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ)
   //TaskHandle_t 	apvRmtCltHndl[RMT_CLT_MAX];
   sess_ctx_t    axRmtClt[RMT_CLT_MAX];
   
@@ -36,7 +36,7 @@ typedef struct {
 } srv_ctx_t;
 
 typedef struct {
-  // идентификаторы серверов tcp
+  // РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ СЃРµСЂРІРµСЂРѕРІ tcp
   bool bRunned;
   TaskHandle_t pvDispHndl;
   bool bNetifIsUp;

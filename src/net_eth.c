@@ -4,30 +4,30 @@
 #include "proj_conf.h"
 //#include "net_user.h"
 
-// Ïðîòîòèïû ëîêàëüíûõ (static) ôóíêöèé
+// ÐŸÑ€Ð¾Ñ‚Ð¾Ñ‚Ð¸Ð¿Ñ‹ Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ñ‹Ñ… (static) Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¹
 
 static struct pbuf *read_bytes(ETH_HandleTypeDef *);
 
-// Êîíñòàíòû ïóáëè÷íûå (public)
+// ÐšÐ¾Ð½ÑÑ‚Ð°Ð½Ñ‚Ñ‹ Ð¿ÑƒÐ±Ð»Ð¸Ñ‡Ð½Ñ‹Ðµ (public)
 
-const uint8_t macaddress[6] = MAC_ADDR; // Ìàññèâ çíà÷åíèé ñåòåâîãî MAC àäðåñà
+const uint8_t macaddress[6] = MAC_ADDR; // ÐœÐ°ÑÑÐ¸Ð² Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ð¹ ÑÐµÑ‚ÐµÐ²Ð¾Ð³Ð¾ MAC Ð°Ð´Ñ€ÐµÑÐ°
 
-// Êîíñòàíòû ëîêàëüíûå (static)
+// ÐšÐ¾Ð½ÑÑ‚Ð°Ð½Ñ‚Ñ‹ Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ñ‹Ðµ (static)
 
-static const u32_t addr[PHY_MAX_LEN] = PHY_ADDR; // àäðåñ ìèêðîñõåìû
-//static const int addr = PHY_ADDR; // àäðåñ ìèêðîñõåìû
+static const u32_t addr[PHY_MAX_LEN] = PHY_ADDR; // Ð°Ð´Ñ€ÐµÑ Ð¼Ð¸ÐºÑ€Ð¾ÑÑ…ÐµÐ¼Ñ‹
+//static const int addr = PHY_ADDR; // Ð°Ð´Ñ€ÐµÑ Ð¼Ð¸ÐºÑ€Ð¾ÑÑ…ÐµÐ¼Ñ‹
 
-// Ïåðåìåííûå ëîêàëüíûå (static)
+// ÐŸÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ðµ Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ñ‹Ðµ (static)
 
-static net_eth_t xEth; // èíñòàíñ íèæíåãî 'Eth' óðîâíÿ
-// Ìàññèâû áóôôåðîâ DMA
+static net_eth_t xEth; // Ð¸Ð½ÑÑ‚Ð°Ð½Ñ Ð½Ð¸Ð¶Ð½ÐµÐ³Ð¾ 'Eth' ÑƒÑ€Ð¾Ð²Ð½Ñ
+// ÐœÐ°ÑÑÐ¸Ð²Ñ‹ Ð±ÑƒÑ„Ñ„ÐµÑ€Ð¾Ð² DMA
 #pragma data_alignment=4 
 __ALIGN_BEGIN __attribute__((__section__(".lwip"))) static ETH_DMADescTypeDef
   DMARxDscrTab[ETH_RXBUFNB] __ALIGN_END;
 #pragma data_alignment=4 
 __ALIGN_BEGIN __attribute__((__section__(".lwip"))) static ETH_DMADescTypeDef
   DMATxDscrTab[ETH_TXBUFNB] __ALIGN_END;
-// Ìàññèâ áóôôåðîâ äëÿ âõîäÿùèõ ñîîáùåíèé
+// ÐœÐ°ÑÑÐ¸Ð² Ð±ÑƒÑ„Ñ„ÐµÑ€Ð¾Ð² Ð´Ð»Ñ Ð²Ñ…Ð¾Ð´ÑÑ‰Ð¸Ñ… ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ð¹
 #pragma data_alignment=4 
 __ALIGN_BEGIN __attribute__((__section__(".lwip"))) static uint8_t
   Rx_Buff[ETH_RXBUFNB][1524] __ALIGN_END;
@@ -35,7 +35,7 @@ __ALIGN_BEGIN __attribute__((__section__(".lwip"))) static uint8_t
 __ALIGN_BEGIN __attribute__((__section__(".lwip"))) static uint8_t
   Tx_Buff[ETH_TXBUFNB][1524] __ALIGN_END;
 
-// Ïóáëè÷íûå (public) ôóíêöèè
+// ÐŸÑƒÐ±Ð»Ð¸Ñ‡Ð½Ñ‹Ðµ (public) Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
 
 /**	----------------------------------------------------------------------------
 	* @brief ??? */
@@ -81,7 +81,7 @@ s32_t
       addr[0], __FUNCTION__, __LINE__) );
 #endif
 	rc = HAL_ETH_Init(phandle);
-  // âíèìàíèå! Ñëó÷àé îøèáêè äàëåå íå îáðàáàòûâàåòñÿ! Âàæíî ÷òîáû áûëî OK
+  // Ð²Ð½Ð¸Ð¼Ð°Ð½Ð¸Ðµ! Ð¡Ð»ÑƒÑ‡Ð°Ð¹ Ð¾ÑˆÐ¸Ð±ÐºÐ¸ Ð´Ð°Ð»ÐµÐµ Ð½Ðµ Ð¾Ð±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÐµÑ‚ÑÑ! Ð’Ð°Ð¶Ð½Ð¾ Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð±Ñ‹Ð»Ð¾ OK
   if (rc == HAL_OK) {
     LWIP_DEBUGF( NET_DEBUG, ("PHY init...OK, in '%s' /NET/net_eth.c:%d\r\n", 
       __FUNCTION__, __LINE__) );
@@ -99,7 +99,7 @@ s32_t
 }
 
 /**	----------------------------------------------------------------------------
-	* @brief  ×òåíèå ñòàòóñà ðåãèñòðà BSR n-íîãî êîë-âà èíòåðôåéñîâ PHY
+	* @brief  Ð§Ñ‚ÐµÐ½Ð¸Ðµ ÑÑ‚Ð°Ñ‚ÑƒÑÐ° Ñ€ÐµÐ³Ð¸ÑÑ‚Ñ€Ð° BSR n-Ð½Ð¾Ð³Ð¾ ÐºÐ¾Ð»-Ð²Ð° Ð¸Ð½Ñ‚ÐµÑ€Ñ„ÐµÐ¹ÑÐ¾Ð² PHY
 	* @param  ptr: ??? */
 s32_t
   net_eth__is_links_up(net_eth_t *px, bool *sta) {
@@ -152,19 +152,19 @@ void
 }
 
 /**	----------------------------------------------------------------------------
-	* @brief  Ôóíêöèÿ-îáðàáîò÷èê âõîäíûõ ïàêåòîâ â îòâåò íà ñèãíàë ñåìàôîðà
-	* @param  argv: Óêàçàòåëü íà âñ¸
-	* @retval none: Íåò */
+	* @brief  Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ-Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº Ð²Ñ…Ð¾Ð´Ð½Ñ‹Ñ… Ð¿Ð°ÐºÐµÑ‚Ð¾Ð² Ð² Ð¾Ñ‚Ð²ÐµÑ‚ Ð½Ð° ÑÐ¸Ð³Ð½Ð°Ð» ÑÐµÐ¼Ð°Ñ„Ð¾Ñ€Ð°
+	* @param  argv: Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ð²ÑÑ‘
+	* @retval none: ÐÐµÑ‚ */
 s32_t
   net_eth__input(net_eth_t *ptr, void * argv) {
 /*----------------------------------------------------------------------------*/
 struct pbuf *pbuf;
 
-// ïðîâåðêà
+// Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ°
 if ((!ptr)) return -1;
 if ((!ptr->pscInput)) return -1;
 
-// áåãóíîê ïî ïðèíÿòûì ñîîáùåíèÿ pbuf
+// Ð±ÐµÐ³ÑƒÐ½Ð¾Ðº Ð¿Ð¾ Ð¿Ñ€Ð¸Ð½ÑÑ‚Ñ‹Ð¼ ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ñ pbuf
 do {
   pbuf = read_bytes(&(ptr->xHandle)); //FIXME
   if (pbuf != NULL) {
@@ -176,11 +176,11 @@ return 0;
 }
 
 /**	----------------------------------------------------------------------------
-	* @brief  Ôóíêöèÿ-îáðàáîò÷èê âûõîäíûõ ïàêåòîâ
-	* @param  netif: Óêàçàòåëü óïð. ñòðóêòóðó
-	* @param  p: Óêàçàòåëü íà çàãîëîâîê ñîîáùåíèÿ
-	* @param  argv: Óêàçàòåëü íà âñ¸
-	* @retval pbuf*: Óêàçàòåëü íà çàãîëîâîê ñîîáùåíèÿ */
+	* @brief  Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ-Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº Ð²Ñ‹Ñ…Ð¾Ð´Ð½Ñ‹Ñ… Ð¿Ð°ÐºÐµÑ‚Ð¾Ð²
+	* @param  netif: Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ ÑƒÐ¿Ñ€. ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€Ñƒ
+	* @param  p: Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ð·Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ñ
+	* @param  argv: Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ð²ÑÑ‘
+	* @retval pbuf*: Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ð·Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ñ */
 err_t 
   net_eth__output(void *parg1, struct pbuf *p, void * parg2) {
 /*----------------------------------------------------------------------------*/
@@ -195,11 +195,11 @@ err_t
   uint8_t *buffer;
 	//net_eth_t *pxEth;
   
-  // ïðîâåðêà
+  // Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ°
   if ((!parg2)||(!p)) return ERR_VAL;
   
 	net_eth_t *pxeth = (net_eth_t *)parg2;
-  //argv äîñòàòî÷íî áûòü ETH_HandleTypeDef 
+  //argv Ð´Ð¾ÑÑ‚Ð°Ñ‚Ð¾Ñ‡Ð½Ð¾ Ð±Ñ‹Ñ‚ÑŒ ETH_HandleTypeDef 
   phandle = (ETH_HandleTypeDef*)&(pxeth->xHandle);
   pdmatx = phandle->TxDesc;
   buffer = (uint8_t *)(pdmatx->Buffer1Addr);
@@ -271,12 +271,12 @@ error:
   return errval;
 }
 
-// Ëîêàëüíûå (static) ôóíêöèè
+// Ð›Ð¾ÐºÐ°Ð»ÑŒÐ½Ñ‹Ðµ (static) Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
 
 /**	----------------------------------------------------------------------------
-	* @brief  Ôóíêöèÿ-îáðàáîò÷èê âõîäíûõ ïàêåòîâ
-	* @param  argv: Óêàçàòåëü íà âñ¸
-	* @retval pbuf*: Óêàçàòåëü íà çàãîëîâîê ñîîáùåíèÿ */
+	* @brief  Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ-Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº Ð²Ñ…Ð¾Ð´Ð½Ñ‹Ñ… Ð¿Ð°ÐºÐµÑ‚Ð¾Ð²
+	* @param  argv: Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ð²ÑÑ‘
+	* @retval pbuf*: Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ð·Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ñ */
 static struct pbuf * 
 	read_bytes(ETH_HandleTypeDef *phandle) {
 /*----------------------------------------------------------------------------*/	
@@ -290,7 +290,7 @@ static struct pbuf *
   uint32_t i=0;
   //ETH_HandleTypeDef *phandle;
   
-  // ïðîâåðêà
+  // Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ°
   if (!phandle) return NULL;
 	
 	//phandle = &(((net_eth_t *)argv)->xHandle);

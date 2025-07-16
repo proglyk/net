@@ -16,7 +16,7 @@ void
   sess_ctx_t *sess_ctx = (sess_ctx_t*)argv;
   void *user_ctx;
   
-  // ïðîâåðêà àðã-îâ
+  // Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð°Ñ€Ð³-Ð¾Ð²
   if (!sess_ctx) goto exit;
   if ( (!sess_ctx->pxFn->ppvSessInit) | (!sess_ctx->pxFn->pslSessDo) )
     goto exit;
@@ -26,21 +26,21 @@ void
   DBG_PRINT( NET_DEBUG, ("Task '%s' created, in '%s' /NET/net_sess.c:%d\r\n", 
     (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );
 
-  // øàã 1/3. Ïðîâîäèì èíèöèàëèçàöèþ (åñëè òàêîâàÿ òðåáóåòñÿ)
+  // ÑˆÐ°Ð³ 1/3. ÐŸÑ€Ð¾Ð²Ð¾Ð´Ð¸Ð¼ Ð¸Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸ÑŽ (ÐµÑÐ»Ð¸ Ñ‚Ð°ÐºÐ¾Ð²Ð°Ñ Ñ‚Ñ€ÐµÐ±ÑƒÐµÑ‚ÑÑ)
   user_ctx = sess_ctx->pxFn->ppvSessInit( sess_ctx->pxFn->ppvSessInitCb,
                                           &sess_ctx->xData,
                                           sess_ctx->pxFn->pvUpper );
   if (user_ctx == NULL) goto exit;
 	
-	// øàã 2/3. Çàïóñêàåì öèêë ÷òåíèÿ î÷åðåäíîãî âõîäÿùåãî ïàêåòà äî òåõ ïîð...
+	// ÑˆÐ°Ð³ 2/3. Ð—Ð°Ð¿ÑƒÑÐºÐ°ÐµÐ¼ Ñ†Ð¸ÐºÐ» Ñ‡Ñ‚ÐµÐ½Ð¸Ñ Ð¾Ñ‡ÐµÑ€ÐµÐ´Ð½Ð¾Ð³Ð¾ Ð²Ñ…Ð¾Ð´ÑÑ‰ÐµÐ³Ð¾ Ð¿Ð°ÐºÐµÑ‚Ð° Ð´Ð¾ Ñ‚ÐµÑ… Ð¿Ð¾Ñ€...
 	do {
-		// ×èòàåì äàííûå è îò÷èòûâàåìñÿ î ñòàòóñå.
+		// Ð§Ð¸Ñ‚Ð°ÐµÐ¼ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð¸ Ð¾Ñ‚Ñ‡Ð¸Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ÑÑ Ð¾ ÑÑ‚Ð°Ñ‚ÑƒÑÐµ.
 		err = sess_ctx->pxFn->pslSessDo(user_ctx);
-	// ... äî òåõ ïîð, ïîêà àêòèâåí ôëàã MBTCP_OK. Èíà÷å â ñëó÷àå ôëàãîâ 
-	// MBTCP_NOCLIENT è MBTCP_LOSECON âûéòè èç öèêëà.
+	// ... Ð´Ð¾ Ñ‚ÐµÑ… Ð¿Ð¾Ñ€, Ð¿Ð¾ÐºÐ° Ð°ÐºÑ‚Ð¸Ð²ÐµÐ½ Ñ„Ð»Ð°Ð³ MBTCP_OK. Ð˜Ð½Ð°Ñ‡Ðµ Ð² ÑÐ»ÑƒÑ‡Ð°Ðµ Ñ„Ð»Ð°Ð³Ð¾Ð² 
+	// MBTCP_NOCLIENT Ð¸ MBTCP_LOSECON Ð²Ñ‹Ð¹Ñ‚Ð¸ Ð¸Ð· Ñ†Ð¸ÐºÐ»Ð°.
 	} while (err == 0);
 	
-	// øàã 3/3. Îñâîáîæäàåì ðåñóðñû.
+	// ÑˆÐ°Ð³ 3/3. ÐžÑÐ²Ð¾Ð±Ð¾Ð¶Ð´Ð°ÐµÐ¼ Ñ€ÐµÑÑƒÑ€ÑÑ‹.
   if ( sess_ctx->pxFn->pvSessDel )
     sess_ctx->pxFn->pvSessDel(sess_ctx->pxFn->pvSessDelCb, user_ctx);
   
@@ -65,8 +65,8 @@ int
 static int
 	delete(sess_ctx_t *ctx, TaskHandle_t handle) {
 /*----------------------------------------------------------------------------*/
-  // Çàêðûòü ðàíåå îòêðûòûé ñîêåò íîâîãî ïîäêëþ÷åíèÿ, Óäàëÿåì çàïèñü î 
-  // ïîäêëþ÷åíèè, Óäàëÿåì çàäà÷ó
+  // Ð—Ð°ÐºÑ€Ñ‹Ñ‚ÑŒ Ñ€Ð°Ð½ÐµÐµ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ñ‹Ð¹ ÑÐ¾ÐºÐµÑ‚ Ð½Ð¾Ð²Ð¾Ð³Ð¾ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ, Ð£Ð´Ð°Ð»ÑÐµÐ¼ Ð·Ð°Ð¿Ð¸ÑÑŒ Ð¾ 
+  // Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ð¸, Ð£Ð´Ð°Ð»ÑÐµÐ¼ Ð·Ð°Ð´Ð°Ñ‡Ñƒ
   if (ctx->xData.slSock != -1) {
     lwip_close(ctx->xData.slSock);
   }

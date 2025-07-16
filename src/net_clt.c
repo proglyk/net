@@ -5,13 +5,13 @@
 #include "cmsis_os.h"
 #include "lwip/def.h"
 
-// Прототипы локальных (static) функций
+// РџСЂРѕС‚РѕС‚РёРїС‹ Р»РѕРєР°Р»СЊРЅС‹С… (static) С„СѓРЅРєС†РёР№
 
 static s32_t get_clients_number(net_clt_t *);
 static void  dispatcher(void *);
 static int   try_connect(clt_ctx_t *, int *);
 
-// Публичные (public) функции
+// РџСѓР±Р»РёС‡РЅС‹Рµ (public) С„СѓРЅРєС†РёРё
 
 /**	----------------------------------------------------------------------------
 	* @brief ??? */
@@ -26,11 +26,11 @@ int
                       &(px->pvCltHndl) );
 }
 
-// Локальные (static) функции
+// Р›РѕРєР°Р»СЊРЅС‹Рµ (static) С„СѓРЅРєС†РёРё
 
 /**	----------------------------------------------------------------------------
 	* @brief ???
-	* @retval error: Статус выполнения функции. */
+	* @retval error: РЎС‚Р°С‚СѓСЃ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё. */
 static s32_t
   get_clients_number(net_clt_t *px) {
 /*----------------------------------------------------------------------------*/
@@ -72,10 +72,10 @@ static void
       if ( (px->bNetifIsUp)&(!ctx->xRmtSrv.handle)&(ctx->bEnable) ) {
         err = try_connect(ctx, &sock);
         if (err >= 0) {
-          // Индикация в uart
+          // РРЅРґРёРєР°С†РёСЏ РІ uart
           LWIP_DEBUGF( NET_DEBUG, ("Client \"%s\" connected, in '%s' /NET/net_clt.c:%d\r\n", 
               (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );
-          // запуск отдельной задачи под каждого нового клиента
+          // Р·Р°РїСѓСЃРє РѕС‚РґРµР»СЊРЅРѕР№ Р·Р°РґР°С‡Рё РїРѕРґ РєР°Р¶РґРѕРіРѕ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р°
           ctx->xRmtSrv.xData.ulId = ctx->ulId;
           ctx->xRmtSrv.xData.slSock = sock;
           ctx->xRmtSrv.xData.xAddrRmt.addr = ctx->xIpRmt.addr;
@@ -99,7 +99,7 @@ static void
         }
       }
     }
-    // задержка перед новой попыткой подключиться
+    // Р·Р°РґРµСЂР¶РєР° РїРµСЂРµРґ РЅРѕРІРѕР№ РїРѕРїС‹С‚РєРѕР№ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ
     vTaskDelay(10000);
   } while (status == 0);
   
@@ -123,7 +123,7 @@ static int
     return -1;
   }  
   
-  // ХЗ зачем
+  // РҐР— Р·Р°С‡РµРј
 	memset(&local, 0, sizeof(local));
 	local.sin_family      = AF_INET;
 	local.sin_port        = PP_HTONS(50000 + ctx->ulId/*ctx->ulPort*/);
@@ -153,7 +153,7 @@ static int
   return 0;
   
   fail:
-	// закрывать каждый раз, если успешно открывался
+	// Р·Р°РєСЂС‹РІР°С‚СЊ РєР°Р¶РґС‹Р№ СЂР°Р·, РµСЃР»Рё СѓСЃРїРµС€РЅРѕ РѕС‚РєСЂС‹РІР°Р»СЃСЏ
 	lwip_close(sock); *psock = -1;
   return -1;
 }

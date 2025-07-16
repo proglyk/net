@@ -6,18 +6,18 @@
 #include "lwip/ip_addr.h"
 #include "proj_conf.h"
 
-// Прототипы локальных (static) функций
+// РџСЂРѕС‚РѕС‚РёРїС‹ Р»РѕРєР°Р»СЊРЅС‹С… (static) С„СѓРЅРєС†РёР№
 
 static int get_free_pos_srv(net_srv_t *pxSrv);
 static int get_free_pos_clt(net_clt_t *pxClt);
 static void	netif_callback(bool);
 
-// Переменные локальные (static)
+// РџРµСЂРµРјРµРЅРЅС‹Рµ Р»РѕРєР°Р»СЊРЅС‹Рµ (static)
 
-static net_t xNet; // инстанс верхнего 'Net' уровня
+static net_t xNet; // РёРЅСЃС‚Р°РЅСЃ РІРµСЂС…РЅРµРіРѕ 'Net' СѓСЂРѕРІРЅСЏ
 
 
-// Публичные (public) функции
+// РџСѓР±Р»РёС‡РЅС‹Рµ (public) С„СѓРЅРєС†РёРё
 
 /**	----------------------------------------------------------------------------
 	* @brief ??? */
@@ -39,7 +39,7 @@ void
 /*----------------------------------------------------------------------------*/
 	//
   xNet.xClt.bNetifIsUp = xNet.xSrv.bNetifIsUp = false;
-  // запустить задачу клиентов, серверов
+  // Р·Р°РїСѓСЃС‚РёС‚СЊ Р·Р°РґР°С‡Сѓ РєР»РёРµРЅС‚РѕРІ, СЃРµСЂРІРµСЂРѕРІ
   net_clt__task_create(&(xNet.xClt));
   net_srv__task_create(&(xNet.xSrv));
   //
@@ -53,16 +53,16 @@ s32_t
 /*----------------------------------------------------------------------------*/
   s32_t pos = 0; //FIXME
   
-  // поиск свободной позиции в массиве axServers
+  // РїРѕРёСЃРє СЃРІРѕР±РѕРґРЅРѕР№ РїРѕР·РёС†РёРё РІ РјР°СЃСЃРёРІРµ axServers
   if ((pos = get_free_pos_srv(&(pNet->xSrv))) < 0) {
     return -1;
   }
-  // копируем данные из инициализирующей структуры
+  // РєРѕРїРёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· РёРЅРёС†РёР°Р»РёР·РёСЂСѓСЋС‰РµР№ СЃС‚СЂСѓРєС‚СѓСЂС‹
   strcpy((char *)pNet->xSrv.axServers[pos].acName, pInit->pcName);
   pNet->xSrv.axServers[pos].pxFn = pInit->pxFn;
   pNet->xSrv.axServers[pos].bEnable = pInit->bEnabled;
   pNet->xSrv.axServers[pos].ulPort = pInit->ulPort;
-  // Прописываем некоторые начальные значения
+  // РџСЂРѕРїРёСЃС‹РІР°РµРј РЅРµРєРѕС‚РѕСЂС‹Рµ РЅР°С‡Р°Р»СЊРЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
   pNet->xSrv.axServers[pos].slTaskCounter = 0;
   pNet->xSrv.axServers[pos].slSockServ = -1;
   for (u8_t j=0; j<RMT_CLT_MAX; j++) {
@@ -80,11 +80,11 @@ s32_t
   s32_t pos = 0; //FIXME
 	u32_t rc;
   
-  // поиск свободной позиции в массиве axClients
+  // РїРѕРёСЃРє СЃРІРѕР±РѕРґРЅРѕР№ РїРѕР·РёС†РёРё РІ РјР°СЃСЃРёРІРµ axClients
   if ((pos = get_free_pos_clt(&(pNet->xClt))) < 0) {
     return -1;
   }
-  // копируем данные из инициализирующей структуры
+  // РєРѕРїРёСЂСѓРµРј РґР°РЅРЅС‹Рµ РёР· РёРЅРёС†РёР°Р»РёР·РёСЂСѓСЋС‰РµР№ СЃС‚СЂСѓРєС‚СѓСЂС‹
   strcpy((char *)pNet->xClt.axClients[pos].acName, pInit->pcName);
   pNet->xClt.axClients[pos].pxFn = pInit->pxFn;
   pNet->xClt.axClients[pos].bEnable = pInit->bEnabled;
@@ -95,7 +95,7 @@ s32_t
   pNet->xClt.axClients[pos].pcIpRmt = pInit->pcRmt;
   if (!rc) return -1;
   pNet->xClt.axClients[pos].ulPort = pInit->ulPort;
-  // временно. только для sntp
+  // РІСЂРµРјРµРЅРЅРѕ. С‚РѕР»СЊРєРѕ РґР»СЏ sntp
   pNet->xClt.axClients[pos].ulId = pInit->ulId;
   
 	return 0;
@@ -111,7 +111,7 @@ net_t *
 
 /**	----------------------------------------------------------------------------
 	* @brief  ???
-	* @param  pctl: Указатель на всё */
+	* @param  pctl: РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РІСЃС‘ */
 void
 	net__irq( net_t *pnet ) {
 /*----------------------------------------------------------------------------*/
@@ -120,14 +120,14 @@ void
 
 /**	----------------------------------------------------------------------------
 	* @brief  ???
-	* @param  pctl: Указатель на всё */
+	* @param  pctl: РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РІСЃС‘ */
 void
 	net__input( net_t *pnet ) {
 /*----------------------------------------------------------------------------*/
   net_netif__sig_input(net_netif__inst());
 }
 
-// Локальные (static) функции
+// Р›РѕРєР°Р»СЊРЅС‹Рµ (static) С„СѓРЅРєС†РёРё
 
 /**	----------------------------------------------------------------------------
 	* @brief ??? */
@@ -161,23 +161,23 @@ static int
 
 /**	----------------------------------------------------------------------------
 	* @brief  ???
-	* @param  bool: Указатель на всё */
+	* @param  bool: РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РІСЃС‘ */
 static void
 	netif_callback( bool sta_new ) {
 /*----------------------------------------------------------------------------*/
   static bool sta_old = false;
   
-  // сравниваем новое состояние со старым
+  // СЃСЂР°РІРЅРёРІР°РµРј РЅРѕРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ СЃРѕ СЃС‚Р°СЂС‹Рј
   if (sta_new != sta_old) {
-    // обвновляем статус линка в диспетчерах SRV и CLT
+    // РѕР±РІРЅРѕРІР»СЏРµРј СЃС‚Р°С‚СѓСЃ Р»РёРЅРєР° РІ РґРёСЃРїРµС‚С‡РµСЂР°С… SRV Рё CLT
     xNet.xClt.bNetifIsUp = xNet.xSrv.bNetifIsUp = sta_new;
-    // только для "link is down" закрываем серверы.
+    // С‚РѕР»СЊРєРѕ РґР»СЏ "link is down" Р·Р°РєСЂС‹РІР°РµРј СЃРµСЂРІРµСЂС‹.
     if (sta_new == false)
       net_srv__delete_all(&(xNet.xSrv));
-    // выводим в консоль
+    // РІС‹РІРѕРґРёРј РІ РєРѕРЅСЃРѕР»СЊ
     LWIP_DEBUGF( NET_DEBUG, ("Link '%s', in '%s' /NET/net.c:%d\r\n", 
       sta_new == true ? "is up" : "is down", __FUNCTION__, __LINE__) );
-    // Сохраняем новое состояние
+    // РЎРѕС…СЂР°РЅСЏРµРј РЅРѕРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
     sta_old = sta_new;
   }
 }

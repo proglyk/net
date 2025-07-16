@@ -70,9 +70,9 @@ bool
 	net_srv__is_enabled(net_srv_t *px, const char *name) {
 /*----------------------------------------------------------------------------*/
   srv_ctx_t *ctx;
-  // пров арг-ов
+  // РїСЂРѕРІ Р°СЂРі-РѕРІ
   if (!px) return false;
-  // поиск
+  // РїРѕРёСЃРє
   for (u8_t i = 0; i < SRV_NUM_MAX; i++) {
     ctx = (srv_ctx_t *)(px->axServers+i);
 		if (ctx) {
@@ -90,15 +90,15 @@ void
 	net_srv__enable(net_srv_t *px, const char *name) {
 /*----------------------------------------------------------------------------*/
   srv_ctx_t *ctx;
-  // пров арг-ов
+  // РїСЂРѕРІ Р°СЂРі-РѕРІ
   if (!px) return;
-  // поиск и редакт-ие
+  // РїРѕРёСЃРє Рё СЂРµРґР°РєС‚-РёРµ
   for (u8_t i = 0; i < SRV_NUM_MAX; i++) {
     ctx = (srv_ctx_t *)(px->axServers+i);
 		if (ctx) {
-      // FIXME изначально неверное условие (см. "net_srv__disable")
+      // FIXME РёР·РЅР°С‡Р°Р»СЊРЅРѕ РЅРµРІРµСЂРЅРѕРµ СѓСЃР»РѕРІРёРµ (СЃРј. "net_srv__disable")
 			if ((!strcmp( (const char *)ctx->acName, name)) & (!ctx->bEnable) ) {
-				// включаем
+				// РІРєР»СЋС‡Р°РµРј
 				ctx->bEnable = true;
 			}
 		}
@@ -111,19 +111,19 @@ void
 	net_srv__disable(net_srv_t *px, const char *name) {
 /*----------------------------------------------------------------------------*/
   srv_ctx_t *ctx;
-  // пров арг-ов
+  // РїСЂРѕРІ Р°СЂРі-РѕРІ
   if (!px) return;
-  // поиск и редакт-ие
+  // РїРѕРёСЃРє Рё СЂРµРґР°РєС‚-РёРµ
   for (u8_t i = 0; i < SRV_NUM_MAX; i++) {
     ctx = (srv_ctx_t *)(px->axServers+i);
 		if (ctx->handle) {
 			if ((!strcmp( (const char *)ctx->acName, name)) & (ctx->bEnable) ) {
-				// удаляем сокеты удаленных клентов, Удаляем их задачи
+				// СѓРґР°Р»СЏРµРј СЃРѕРєРµС‚С‹ СѓРґР°Р»РµРЅРЅС‹С… РєР»РµРЅС‚РѕРІ, РЈРґР°Р»СЏРµРј РёС… Р·Р°РґР°С‡Рё
 				for (u8_t j=0; j<RMT_CLT_MAX; j++) {
 					if ((ctx->axRmtClt+j)->handle)
             net_sess__delete(ctx->axRmtClt+j, (ctx->axRmtClt+j)->handle);
 				}
-				// удаляем сокет сервера, Удаляем задачу
+				// СѓРґР°Р»СЏРµРј СЃРѕРєРµС‚ СЃРµСЂРІРµСЂР°, РЈРґР°Р»СЏРµРј Р·Р°РґР°С‡Сѓ
 				delete(ctx);
 				ctx->bEnable = false;
 			}
@@ -137,13 +137,13 @@ void
 	net_srv__delete_all(net_srv_t *px) {
 /*----------------------------------------------------------------------------*/
   srv_ctx_t *ctx;
-  // пров арг-ов
+  // РїСЂРѕРІ Р°СЂРі-РѕРІ
   if (!px) return;
-  // поиск и редакт-ие
+  // РїРѕРёСЃРє Рё СЂРµРґР°РєС‚-РёРµ
   for (u8_t i = 0; i < SRV_NUM_MAX; i++) {
     ctx = (srv_ctx_t *)(px->axServers+i);
 		if (ctx->handle) {
-      // удаляем сокет сервера, Удаляем задачу. Не трогаем bEnable
+      // СѓРґР°Р»СЏРµРј СЃРѕРєРµС‚ СЃРµСЂРІРµСЂР°, РЈРґР°Р»СЏРµРј Р·Р°РґР°С‡Сѓ. РќРµ С‚СЂРѕРіР°РµРј bEnable
       delete(ctx);
 		}
 	}
@@ -151,7 +151,7 @@ void
 
 /**	----------------------------------------------------------------------------
 	* @brief ???
-	* @retval error: Статус выполнения функции. */
+	* @retval error: РЎС‚Р°С‚СѓСЃ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё. */
 static s32_t
   get_servers_number(net_srv_t *px) {
 /*----------------------------------------------------------------------------*/
@@ -177,7 +177,7 @@ static void dispatcher(void *pv) {
   if (size < 0) return;
   
   px->bRunned = true;
-  // TODO переместить в net
+  // TODO РїРµСЂРµРјРµСЃС‚РёС‚СЊ РІ net
   //memset((void *)px->axServers, 0, SERVERS*sizeof(srv_ctx_t));
   
   do {
@@ -193,14 +193,14 @@ static void dispatcher(void *pv) {
           ctx->pvDeleted = (task_cb_fn_t)server_deleted_cb;
           ctx->pvPld = (void *)px;
           ctx->bLatched = 0;
-          // запуск отдельной задачи под каждого нового клиента
+          // Р·Р°РїСѓСЃРє РѕС‚РґРµР»СЊРЅРѕР№ Р·Р°РґР°С‡Рё РїРѕРґ РєР°Р¶РґРѕРіРѕ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р°
           rc = xTaskCreate( poll, 
                             (const char *)ctx->acName,
                             (6*configMINIMAL_STACK_SIZE), 
                             (void *)ctx,
                             makeFreeRtosPriority(osPriorityNormal), 
                             &(ctx->handle) );
-					// проверяем статус и выходим из цикла если !pdPASS
+					// РїСЂРѕРІРµСЂСЏРµРј СЃС‚Р°С‚СѓСЃ Рё РІС‹С…РѕРґРёРј РёР· С†РёРєР»Р° РµСЃР»Рё !pdPASS
 					if (rc == pdPASS) {
 						server_added(px);
 					} else {
@@ -221,7 +221,7 @@ static void dispatcher(void *pv) {
         }
       }
     }
-    // задержка перед ... чем?
+    // Р·Р°РґРµСЂР¶РєР° РїРµСЂРµРґ ... С‡РµРј?
     vTaskDelay(250);
   } while (status == 0);
     
@@ -230,7 +230,7 @@ static void dispatcher(void *pv) {
 
 /**	----------------------------------------------------------------------------
 	* @brief  ???
-	* @param  pctl: Указатель на всё */
+	* @param  pctl: РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РІСЃС‘ */
 static void
 	poll( void *pargv ) {
 /*----------------------------------------------------------------------------*/
@@ -242,40 +242,40 @@ static void
   BaseType_t rc = pdPASS;
   //int rc = pdPASS;
   
-  // проверка арг-ов
+  // РїСЂРѕРІРµСЂРєР° Р°СЂРі-РѕРІ
 	if (!ctx) goto exit;
   // debug
   //LWIP_DEBUGF( NET_DEBUG, ("net_srv.c::poll => task \"%s\" created\r\n", 
   //                         (const char *)pcTaskGetName(NULL)) );
   LWIP_DEBUGF( NET_DEBUG, ("Server \"%s\" created, in '%s' /NET/net_srv.c:%d\r\n", 
               (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );
-	// Запускаем цикл идентификации очередного нового клиента до тех пор...
+	// Р—Р°РїСѓСЃРєР°РµРј С†РёРєР» РёРґРµРЅС‚РёС„РёРєР°С†РёРё РѕС‡РµСЂРµРґРЅРѕРіРѕ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р° РґРѕ С‚РµС… РїРѕСЂ...
 	do {
-		// Создаем сокет для очередного нового клиента.
+		// РЎРѕР·РґР°РµРј СЃРѕРєРµС‚ РґР»СЏ РѕС‡РµСЂРµРґРЅРѕРіРѕ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р°.
 		sock = lwip_accept( ctx->slSockServ,
                         (struct sockaddr*)&remote,
                         (socklen_t*)&remotelen );
     //
     //stats_display();
-		// Если сокет нового подкл. успешно открыт, то запускаем новую задачу клиента	
+		// Р•СЃР»Рё СЃРѕРєРµС‚ РЅРѕРІРѕРіРѕ РїРѕРґРєР». СѓСЃРїРµС€РЅРѕ РѕС‚РєСЂС‹С‚, С‚Рѕ Р·Р°РїСѓСЃРєР°РµРј РЅРѕРІСѓСЋ Р·Р°РґР°С‡Сѓ РєР»РёРµРЅС‚Р°	
 		if (sock >= 0) {
 			for (int ig=0; ig<RMT_CLT_MAX; ig++) {
 				if (!ctx->axRmtClt[ig].handle) {
-					// полезная нагрузка в поля структуры, связанной конкретным клиентом
+					// РїРѕР»РµР·РЅР°СЏ РЅР°РіСЂСѓР·РєР° РІ РїРѕР»СЏ СЃС‚СЂСѓРєС‚СѓСЂС‹, СЃРІСЏР·Р°РЅРЅРѕР№ РєРѕРЅРєСЂРµС‚РЅС‹Рј РєР»РёРµРЅС‚РѕРј
 					ctx->axRmtClt[ig].xData.slSock = sock;
           ctx->axRmtClt[ig].pxFn = ctx->pxFn;
           ctx->axRmtClt[ig].pvDeleted = (task_cb_fn_t)remote_client_deleted_cb;
           ctx->axRmtClt[ig].pvPld = (void *)ctx;
-					// даем имя строке
+					// РґР°РµРј РёРјСЏ СЃС‚СЂРѕРєРµ
 					sprintf(name, "clt%02d", ig);
-					// запуск отдельной задачи под каждого нового клиента
+					// Р·Р°РїСѓСЃРє РѕС‚РґРµР»СЊРЅРѕР№ Р·Р°РґР°С‡Рё РїРѕРґ РєР°Р¶РґРѕРіРѕ РЅРѕРІРѕРіРѕ РєР»РёРµРЅС‚Р°
 					rc = xTaskCreate( net__session,
                             name,
                             (6*configMINIMAL_STACK_SIZE), 
                             &(ctx->axRmtClt[ig]),
                             makeFreeRtosPriority(osPriorityNormal), 
                             &(ctx->axRmtClt[ig].handle) );
-          // проверяем статус и выходим из цикла если !pdPASS
+          // РїСЂРѕРІРµСЂСЏРµРј СЃС‚Р°С‚СѓСЃ Рё РІС‹С…РѕРґРёРј РёР· С†РёРєР»Р° РµСЃР»Рё !pdPASS
 					if (rc == pdPASS) {
 						remote_client_added(ctx);
 					} else {
@@ -288,10 +288,10 @@ static void
 				}
 			}
 		}
-    // задержка / переключение контекста
+    // Р·Р°РґРµСЂР¶РєР° / РїРµСЂРµРєР»СЋС‡РµРЅРёРµ РєРѕРЅС‚РµРєСЃС‚Р°
     //vTaskDelay(100);
-	// ... до тех пор, пока активны флаги MBTCP_OK или MBTCP_NOCLIENT. Иначе в 
-	// случае флага MBTCP_LOSECON выйти из цикла.
+	// ... РґРѕ С‚РµС… РїРѕСЂ, РїРѕРєР° Р°РєС‚РёРІРЅС‹ С„Р»Р°РіРё MBTCP_OK РёР»Рё MBTCP_NOCLIENT. РРЅР°С‡Рµ РІ 
+	// СЃР»СѓС‡Р°Рµ С„Р»Р°РіР° MBTCP_LOSECON РІС‹Р№С‚Рё РёР· С†РёРєР»Р°.
 	} while ( (sock >= 0) /*ctx->bEnable*/ & (rc==pdPASS) );
 
 exit:
@@ -299,8 +299,8 @@ exit:
   //                       (const char *)pcTaskGetName(NULL)) );
   LWIP_DEBUGF( NET_DEBUG, ("Server \"%s\" deleted, in '%s' /NET/net_srv.c:%d\r\n", 
     (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );
-  // Закрыть ранее открытый сокет нового подключения, Удаляем запись о 
-  // подключении, Удаляем задачу
+  // Р—Р°РєСЂС‹С‚СЊ СЂР°РЅРµРµ РѕС‚РєСЂС‹С‚С‹Р№ СЃРѕРєРµС‚ РЅРѕРІРѕРіРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ, РЈРґР°Р»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ 
+  // РїРѕРґРєР»СЋС‡РµРЅРёРё, РЈРґР°Р»СЏРµРј Р·Р°РґР°С‡Сѓ
   if (ctx->slSockServ != -1) {
     lwip_close(ctx->slSockServ);
   }
@@ -312,7 +312,7 @@ exit:
 
 /**	----------------------------------------------------------------------------
 	* @brief  ???
-	* @param  pctl: Указатель на всё */
+	* @param  pctl: РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РІСЃС‘ */
 static s32_t
 	setup( srv_ctx_t *psrv ) {
 /*----------------------------------------------------------------------------*/
@@ -322,10 +322,10 @@ static s32_t
   //int timeout = 10;
   //int timeval = 20; // = {.tv_sec = 0, .tv_usec = 10000};
 
-	// 1/?. Создаем общий сетевой сокет TCP.
+	// 1/?. РЎРѕР·РґР°РµРј РѕР±С‰РёР№ СЃРµС‚РµРІРѕР№ СЃРѕРєРµС‚ TCP.
 	psrv->slSockServ = lwip_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (psrv->slSockServ < 0) {
-		return -1; //TODO надо как-то обработать ошибку
+		return -1; //TODO РЅР°РґРѕ РєР°Рє-С‚Рѕ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ РѕС€РёР±РєСѓ
 	}
   
   //
@@ -334,7 +334,7 @@ static s32_t
   //LWIP_SO_SNDRCVTIMEO_SET(timeval, 20);
   //err = lwip_setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 	
-  //ioctlsocket(psrv->slSockServ, FIONBIO, &on); //достаточно этой строчки
+  //ioctlsocket(psrv->slSockServ, FIONBIO, &on); //РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ СЌС‚РѕР№ СЃС‚СЂРѕС‡РєРё
   /*if (setsockopt(psrv->slSockServ, SOL_SOCKET, SO_RCVTIMEO, &timeval, sizeof(timeval))) {
 		goto gtFail;
 	}*/
@@ -348,7 +348,7 @@ static s32_t
 		goto gtFail;
 	}*/
 	
-	// 2/?. Заполняем структуру со след.полями
+	// 2/?. Р—Р°РїРѕР»РЅСЏРµРј СЃС‚СЂСѓРєС‚СѓСЂСѓ СЃРѕ СЃР»РµРґ.РїРѕР»СЏРјРё
 	memset(&local, 0, sizeof(local));
 	local.sin_family      = AF_INET;
 	local.sin_port        = PP_HTONS(psrv->ulPort);
@@ -365,18 +365,18 @@ static s32_t
 		goto gtFail;
 	}
 	
-	// 5/?. Выставляем флаг активного физического соединения (RJ45 подключен).
+	// 5/?. Р’С‹СЃС‚Р°РІР»СЏРµРј С„Р»Р°Рі Р°РєС‚РёРІРЅРѕРіРѕ С„РёР·РёС‡РµСЃРєРѕРіРѕ СЃРѕРµРґРёРЅРµРЅРёСЏ (RJ45 РїРѕРґРєР»СЋС‡РµРЅ).
 	//ptr->bRunned = true;
-	// Инициилизируем верхний уровень 
+	// РРЅРёС†РёРёР»РёР·РёСЂСѓРµРј РІРµСЂС…РЅРёР№ СѓСЂРѕРІРµРЅСЊ 
 	//psrv->pvUpperInit(&(psrv->pvUpperPld)); //FIXME
 
 	return 0;
 
 	gtFail:
-	// закрывать каждый раз, если успешно открывался
+	// Р·Р°РєСЂС‹РІР°С‚СЊ РєР°Р¶РґС‹Р№ СЂР°Р·, РµСЃР»Рё СѓСЃРїРµС€РЅРѕ РѕС‚РєСЂС‹РІР°Р»СЃСЏ
 	lwip_close(psrv->slSockServ);
 	//ptr->bRunned = false;
-	return -1;  //TODO надо как-то обработать ошибку
+	return -1;  //TODO РЅР°РґРѕ РєР°Рє-С‚Рѕ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ РѕС€РёР±РєСѓ
 }
 
 /**	----------------------------------------------------------------------------
@@ -384,8 +384,8 @@ static s32_t
 static int
 	delete(srv_ctx_t *ctx) {
 /*----------------------------------------------------------------------------*/
-  // Закрыть ранее открытый сокет нового подключения, Удаляем запись о 
-  // подключении, Удаляем задачу
+  // Р—Р°РєСЂС‹С‚СЊ СЂР°РЅРµРµ РѕС‚РєСЂС‹С‚С‹Р№ СЃРѕРєРµС‚ РЅРѕРІРѕРіРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ, РЈРґР°Р»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ 
+  // РїРѕРґРєР»СЋС‡РµРЅРёРё, РЈРґР°Р»СЏРµРј Р·Р°РґР°С‡Сѓ
   /*if (ctx->slSock != -1) {
     lwip_close(ctx->slSock);
   }
@@ -399,15 +399,15 @@ static int
   LWIP_DEBUGF( NET_DEBUG, ("task \"%s\" deleted, in '%s' /NET/net_srv.c:%d\r\n", 
     (const char *)pcTaskGetName(ctx->handle), __FUNCTION__, __LINE__) );
   
-  // Закрыть ранее открытый сокет нового подключения, Удаляем запись о 
-  // подключении, Удаляем задачу
+  // Р—Р°РєСЂС‹С‚СЊ СЂР°РЅРµРµ РѕС‚РєСЂС‹С‚С‹Р№ СЃРѕРєРµС‚ РЅРѕРІРѕРіРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ, РЈРґР°Р»СЏРµРј Р·Р°РїРёСЃСЊ Рѕ 
+  // РїРѕРґРєР»СЋС‡РµРЅРёРё, РЈРґР°Р»СЏРµРј Р·Р°РґР°С‡Сѓ
   if (ctx->slSockServ != -1) {
     lwip_close(ctx->slSockServ);
   }
   //taskYIELD();
   if (ctx->pvDeleted) ctx->pvDeleted(ctx->pvPld);
   vTaskDelete(ctx->handle);
-  // выключаем
+  // РІС‹РєР»СЋС‡Р°РµРј
   //memset(ctx, 0, sizeof(srv_ctx_t));
   ctx->handle = NULL;
   ctx->slSockServ = -1;

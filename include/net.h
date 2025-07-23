@@ -23,7 +23,7 @@ typedef struct {
   u32_t        ulId;
   const u8_t  *pcRmt;
   // ПОля только для сервера
-  // ...
+  void        *pvTopPld;
 } net_init_t;
 
 typedef struct {  

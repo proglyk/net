@@ -62,6 +62,7 @@ s32_t
   pNet->xSrv.axServers[pos].pxFn = pInit->pxFn;
   pNet->xSrv.axServers[pos].bEnable = pInit->bEnabled;
   pNet->xSrv.axServers[pos].ulPort = pInit->ulPort;
+  pNet->xSrv.axServers[pos].pvTopPld = pInit->pvTopPld;
   // Прописываем некоторые начальные значения
   pNet->xSrv.axServers[pos].slTaskCounter = 0;
   pNet->xSrv.axServers[pos].slSockServ = -1;

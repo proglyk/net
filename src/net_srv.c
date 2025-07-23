@@ -262,10 +262,13 @@ static void
 			for (int ig=0; ig<RMT_CLT_MAX; ig++) {
 				if (!ctx->axRmtClt[ig].handle) {
 					// полезная нагрузка в поля структуры, связанной конкретным клиентом
-					ctx->axRmtClt[ig].xData.slSock = sock;
-          ctx->axRmtClt[ig].pxFn = ctx->pxFn;
-          ctx->axRmtClt[ig].pvDeleted = (task_cb_fn_t)remote_client_deleted_cb;
+					// копируются из родительской структуры
           ctx->axRmtClt[ig].pvPld = (void *)ctx;
+          ctx->axRmtClt[ig].pxFn = ctx->pxFn;
+          ctx->axRmtClt[ig].pvTopPld = ctx->pvTopPld;
+          // присваиваются здесь
+          ctx->axRmtClt[ig].xData.slSock = sock;
+          ctx->axRmtClt[ig].pvDeleted = (task_cb_fn_t)remote_client_deleted_cb;
 					// даем имя строке
 					sprintf(name, "clt%02d", ig);
 					// запуск отдельной задачи под каждого нового клиента

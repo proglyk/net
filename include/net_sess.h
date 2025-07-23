@@ -15,6 +15,7 @@ typedef struct {
   void *pvPld;
   // некие данные, передаваемые в задачу из запускающего кода
 	net_if_data_t xData;
+  void *pvTopPld;
   // переменные на новое подключение (новый удаленный клент)
   net_if_fn_t *pxFn;
 } sess_ctx_t;

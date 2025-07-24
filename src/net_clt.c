@@ -5,6 +5,10 @@
 #include "cmsis_os.h"
 #include "lwip/def.h"
 
+// Переменные, константы публичные (public)
+
+extern int errno;
+
 // Прототипы локальных (static) функций
 
 static s32_t get_clients_number(net_clt_t *);
@@ -49,22 +53,15 @@ static s32_t
 static void
   dispatcher(void *pv) {
 /*----------------------------------------------------------------------------*/
-  //client_try_connect(NULL);
-  //client_task(NULL);
   BaseType_t rc;
   int status = 0;
   s32_t err;
   clt_ctx_t *ctx;
   net_clt_t *px = (net_clt_t *)pv;
   int sock = -1;
-	//px = (net_clt_t *)(*pv);
    
-  //int size = sizeof(px->axClients)/sizeof(clt_ctx_t);
   int size = get_clients_number(px);
   if (size < 0) return;
-  
-  px->bRunned = true;
-  //memset((void *)px->axClients, 0, CLIENTS*sizeof(clt_ctx_t));
   
   do {
     for (int i=0; i<size; i++) {
@@ -81,7 +78,7 @@ static void
           ctx->xRmtSrv.xData.xAddrRmt.addr = ctx->xIpRmt.addr;
           ctx->xRmtSrv.xData.ulPortRmt = ctx->ulPort;
           ctx->xRmtSrv.pxFn = ctx->pxFn;
-          rc = xTaskCreate( net__session, 
+          rc = xTaskCreate( net_conn__do, 
                             (const char *)ctx->acName,
                             (4*configMINIMAL_STACK_SIZE), 
                             (void *)&(ctx->xRmtSrv),
@@ -126,12 +123,8 @@ static int
   // ХЗ зачем
 	memset(&local, 0, sizeof(local));
 	local.sin_family      = AF_INET;
-	local.sin_port        = PP_HTONS(50000 + ctx->ulId/*ctx->ulPort*/);
-	//local.sin_addr.s_addr = inet_addr(SNTP_LOCAL_IP);
-	//local.sin_addr.s_addr = ptr->xNetif.ip_addr.addr;
+	local.sin_port        = PP_HTONS(50000 + ctx->ulId);
   local.sin_addr.s_addr = net_netif__get_addr()->addr;
-  //IP_ADDR4((ip4_addr_t*)&local.sin_addr,IP_ADDR0,IP_ADDR1,IP_ADDR2,IP_ADDR3);
-  
   if (lwip_bind(sock, (struct sockaddr *)&local, sizeof(local)) < 0) 
     goto fail;
 
@@ -141,9 +134,6 @@ static int
     ctx->remote.sin_family = AF_INET;
     ctx->remote.sin_port = htons(ctx->ulPort);
     ctx->remote.sin_addr.s_addr = ctx->xIpRmt.addr;
-    //IP_ADDR4((ip4_addr_t*)&ctx->remote.sin_addr,
-    //				 BROKER_ADDR0, BROKER_ADDR1, BROKER_ADDR2, BROKER_ADDR3);
-    
     err = lwip_connect( sock, (struct sockaddr *)&ctx->remote, 
                         sizeof(ctx->remote) );
     if (err < 0) goto fail;
@@ -153,6 +143,8 @@ static int
   return 0;
   
   fail:
+  // сбросить errno чтобы не мешало другим задачам
+  if (errno != 0) errno = 0;
 	// закрывать каждый раз, если успешно открывался
 	lwip_close(sock); *psock = -1;
   return -1;

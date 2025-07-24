@@ -8,32 +8,28 @@
 
 static struct pbuf *read_bytes(ETH_HandleTypeDef *);
 
-// Константы публичные (public)
+// Переменные, константы публичные (public)
 
 const uint8_t macaddress[6] = MAC_ADDR; // Массив значений сетевого MAC адреса
 
-// Константы локальные (static)
+// Переменные, константы локальные (static)
 
 static const u32_t addr[PHY_MAX_LEN] = PHY_ADDR; // адрес микросхемы
-//static const int addr = PHY_ADDR; // адрес микросхемы
-
-// Переменные локальные (static)
-
 static net_eth_t xEth; // инстанс нижнего 'Eth' уровня
 // Массивы буфферов DMA
 #pragma data_alignment=4 
-__ALIGN_BEGIN __attribute__((__section__(".lwip"))) static ETH_DMADescTypeDef
-  DMARxDscrTab[ETH_RXBUFNB] __ALIGN_END;
+__ALIGN_BEGIN __attribute__((__section__(".lwip")))
+  static ETH_DMADescTypeDef DMARxDscrTab[ETH_RXBUFNB] __ALIGN_END;
 #pragma data_alignment=4 
-__ALIGN_BEGIN __attribute__((__section__(".lwip"))) static ETH_DMADescTypeDef
-  DMATxDscrTab[ETH_TXBUFNB] __ALIGN_END;
+__ALIGN_BEGIN __attribute__((__section__(".lwip")))
+  static ETH_DMADescTypeDef DMATxDscrTab[ETH_TXBUFNB] __ALIGN_END;
 // Массив буфферов для входящих сообщений
 #pragma data_alignment=4 
-__ALIGN_BEGIN __attribute__((__section__(".lwip"))) static uint8_t
-  Rx_Buff[ETH_RXBUFNB][1524] __ALIGN_END;
+__ALIGN_BEGIN __attribute__((__section__(".lwip")))
+  static uint8_t Rx_Buff[ETH_RXBUFNB][1524] __ALIGN_END;
 #pragma data_alignment=4 
-__ALIGN_BEGIN __attribute__((__section__(".lwip"))) static uint8_t
-  Tx_Buff[ETH_TXBUFNB][1524] __ALIGN_END;
+__ALIGN_BEGIN __attribute__((__section__(".lwip")))
+  static uint8_t Tx_Buff[ETH_TXBUFNB][1524] __ALIGN_END;
 
 // Публичные (public) функции
 
@@ -158,21 +154,21 @@ void
 s32_t
   net_eth__input(net_eth_t *ptr, void * argv) {
 /*----------------------------------------------------------------------------*/
-struct pbuf *pbuf;
+  struct pbuf *pbuf;
 
-// проверка
-if ((!ptr)) return -1;
-if ((!ptr->pscInput)) return -1;
+  // проверка
+  if ((!ptr)) return -1;
+  if ((!ptr->pscInput)) return -1;
 
-// бегунок по принятым сообщения pbuf
-do {
-  pbuf = read_bytes(&(ptr->xHandle)); //FIXME
-  if (pbuf != NULL) {
-    if (ptr->pscInput(pbuf, argv)) pbuf_free(pbuf);
-  }
-} while(pbuf!=NULL);
+  // бегунок по принятым сообщения pbuf
+  do {
+    pbuf = read_bytes(&(ptr->xHandle)); //FIXME
+    if (pbuf != NULL) {
+      if (ptr->pscInput(pbuf, argv)) pbuf_free(pbuf);
+    }
+  } while(pbuf!=NULL);
 
-return 0;
+  return 0;
 }
 
 /**	----------------------------------------------------------------------------
@@ -193,9 +189,6 @@ err_t
   __IO ETH_DMADescTypeDef *pdmatx;
   ETH_HandleTypeDef *phandle;
   uint8_t *buffer;
-	//net_eth_t *pxEth;
-  
-  // проверка
   if ((!parg2)||(!p)) return ERR_VAL;
   
 	net_eth_t *pxeth = (net_eth_t *)parg2;
@@ -288,12 +281,7 @@ static struct pbuf *
   uint32_t payloadoffset = 0;
   uint32_t byteslefttocopy = 0;
   uint32_t i=0;
-  //ETH_HandleTypeDef *phandle;
-  
-  // проверка
   if (!phandle) return NULL;
-	
-	//phandle = &(((net_eth_t *)argv)->xHandle);
   
   /* get received frame */
   if(HAL_ETH_GetReceivedFrame_IT(phandle) != HAL_OK)

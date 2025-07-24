@@ -1,5 +1,5 @@
-#ifndef _NET_SESS_H_
-#define _NET_SESS_H_
+#ifndef _NET_CONN_H_
+#define _NET_CONN_H_
 
 #include "net_if.h"
 #include "userint.h"
@@ -18,9 +18,10 @@ typedef struct {
   void *pvTopPld;
   // переменные на новое подключение (новый удаленный клент)
   net_if_fn_t *pxFn;
-} sess_ctx_t;
+} conn_ctx_t;
 
-void net__session(void *);
-int	 net_sess__delete(sess_ctx_t *ctx,TaskHandle_t);
+// Прототипы публичных (public) функций
+void net_conn__do(void *);
+int	 net_conn__del(conn_ctx_t *, TaskHandle_t);
 
-#endif //_NET_SESS_H_
+#endif //_NET_CONN_H_

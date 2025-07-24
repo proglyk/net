@@ -4,7 +4,6 @@
 #include "netif/etharp.h"
 #include "string.h"
 #include "proj_conf.h"
-//#include "net_user.h"
 
 static void check_link( void * );
 static void	task_input( void *pargv );
@@ -54,19 +53,19 @@ s32_t
 	net_netif__init(net_netif_t *px, netif_is_up_ptr_t callback) {
 /*----------------------------------------------------------------------------*/
 	s32_t rc;
-	//px->xEthif.pscInput = input_wrapper;
+
 	((net_eth_t *)net_eth__inst())->pscInput = input_wrapper;
 	// Инициализ. Eth вызывается для всех случаев, будь-то линк вкл. или откл.
 	// Все основные регистры HAL_ETH_Init успевает проинициализировать до возврата
 	// статуса HAL_TIMEOUT
 	rc = net_eth__init(net_eth__inst());
-	//if ( rc < 0) return;
+  
 	// Ставим функцию для обратной связи при изменении линка
 	netif_set_link_callback(&(px->xNetif), link_callback_wrapper);
   //
 	px->pvNetifCb = callback;
   
-	// выбираем тип адресации
+	// выбираем тип адресации (TODO Не реализован DHCP)
 	//if (false)	//TODO
 	//	pxEth->Ip.eType = IPDYNAMIC;
 	//else
@@ -110,10 +109,7 @@ static void
 	check_link( void *pargv ) {
 /*----------------------------------------------------------------------------*/
 	s32_t result = 0;
-	//s32_t status;
 	net_netif_t *px;
-	//err_t err;
-	struct dhcp * pdhcp;
   s32_t rc;
 	static bool bLink;
 
@@ -161,7 +157,7 @@ static void
 							// запуск Modbus-TCP
 							if (px->pvNetifCb) px->pvNetifCb(is_netif_up());
 						} else {
-							pdhcp = (struct dhcp *)netif_get_client_data(&(px->xNetif), LWIP_NETIF_CLIENT_DATA_INDEX_DHCP);
+							struct dhcp * pdhcp = (struct dhcp *)netif_get_client_data(&(px->xNetif), LWIP_NETIF_CLIENT_DATA_INDEX_DHCP);
 							if (pdhcp->tries > MAX_DHCP_TRIES) {
 								px->xIp.xDynamic.eState = DHCP_TIMEOUT;
 								dhcp_stop(&(px->xNetif));
@@ -174,10 +170,7 @@ static void
 #endif // LWIP_DHCP
 				} else if (px->xIp.eType == IPSTATIC) {
 					// Вызвать сервер на исполнение, если он еще не запущен
-					/*if (pxeth->bRunned == false)*/ {
-						// запуск Modbus-TCP
-						if (px->pvNetifCb) px->pvNetifCb(is_netif_up());
-					}
+					if (px->pvNetifCb) px->pvNetifCb(is_netif_up());
 				}
 			}
 		}
@@ -218,16 +211,14 @@ static void
 	task_input( void *pargv ) {
 /*----------------------------------------------------------------------------*/
 	s32_t result;
-	//net_t *pnet;
 	net_netif_t *px = (net_netif_t *)pargv;
 
-	//pnet = (net_t *)argv;
 	// шаг 2/3. Запускаем цикл чтения очередного входящего пакета до тех пор...
 	do {
 		// Ожидаем приема нового байта. Блокируемся.
 		xSemaphoreTake(px->pvSmphrInput, portMAX_DELAY);	
 		// Читаем данные и сообщаем о результате...
-		result = net_eth__input(net_eth__inst()/*&(px->xEthif)*/, &(px->xNetif));
+		result = net_eth__input(net_eth__inst(), &(px->xNetif));
 		__NOP();
 	// ... до тех пор, пока результат выполнения 0
 	} while (result == 0);
@@ -285,18 +276,15 @@ static void
                  &(px->pvTaskInput) );
 		
 		// 4. запустить периферию
-		//HAL_ETH_Start(&(px->xHandle));
-		net_eth__start(net_eth__inst()/*&(px->xEthif)*/);
+		net_eth__start(net_eth__inst());
 
 		// Индикация что линк активен
-		//GPIOG->ODR |= 1<<7;
 		LWIP_DEBUGF( NET_DEBUG, ("ETH has started, in '%s' /NET/net_netif.c:%d\r\n", 
       __FUNCTION__, __LINE__) );
 	} else {
 		
 		// 4.
-		//HAL_ETH_Stop(&(px->xHandle));
-		net_eth__stop(net_eth__inst()/*&(px->xEthif)*/);
+		net_eth__stop(net_eth__inst());
 		
 		// 1.
 		netif_set_down(&(px->xNetif));
@@ -306,9 +294,7 @@ static void
 		vTaskDelete(px->pvTaskInput);
 		
 		// 2.
-		//if (pxeth->pvSignalInput)
 		vSemaphoreDelete(px->pvSmphrInput);
-		//vSemaphoreDelete(pxeth->pvSignalStop);
 		
 		// Индикация что линк нективен
     LWIP_DEBUGF( NET_DEBUG, ("ETH has stopped, in '%s' /NET/net_netif.c:%d\r\n",

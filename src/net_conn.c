@@ -1,19 +1,23 @@
-#include "net_sess.h"
+#include "net_conn.h"
 #include "lwip/def.h"
 #include "lwip/sockets.h"
 #include <string.h>
 #include "proj_conf.h"
 #include "dbg.h"
 
-static int delete(sess_ctx_t *ctx, TaskHandle_t handle);
+// Прототипы локальных (static) функций
 
-//extern bool bShellActive;
+static int delete(conn_ctx_t *, TaskHandle_t);
 
+// Публичные (public) функции
+
+/**	----------------------------------------------------------------------------
+	* @brief ??? */
 void
-	net__session(void * argv) {
+	net_conn__do(void * argv) {
 /*----------------------------------------------------------------------------*/
   s32_t err;
-  sess_ctx_t *sess_ctx = (sess_ctx_t*)argv;
+  conn_ctx_t *sess_ctx = (conn_ctx_t*)argv;
   void *user_ctx;
   
   // проверка арг-ов
@@ -21,8 +25,6 @@ void
   if ( (!sess_ctx->pxFn->ppvSessInit) | (!sess_ctx->pxFn->pslSessDo) )
     goto exit;
   
-  //LWIP_DEBUGF( NET_DEBUG, ("Task '%s' created, in '%s' /NET/net_sess.c:%d\r\n", 
-  //  (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );
   DBG_PRINT( NET_DEBUG, ("Task '%s' created, in '%s' /NET/net_sess.c:%d\r\n", 
     (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );
 
@@ -45,8 +47,6 @@ void
     sess_ctx->pxFn->pvSessDel(sess_ctx->pxFn->pvSessDelCb, user_ctx);
   
 exit:
-  //LWIP_DEBUGF( NET_DEBUG, ("Task '%s' deleted, in '%s' /NET/net_sess.c:%d\r\n", 
-  //  (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );
   DBG_PRINT( NET_DEBUG, ("Task '%s' deleted, in '%s' /NET/net_sess.c:%d\r\n", 
     (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );
 	delete(sess_ctx, NULL);
@@ -55,15 +55,17 @@ exit:
 /**	----------------------------------------------------------------------------
 	* @brief ??? */
 int
-	net_sess__delete(sess_ctx_t *ctx, TaskHandle_t handle) {
+	net_conn__del(conn_ctx_t *ctx, TaskHandle_t handle) {
 /*----------------------------------------------------------------------------*/
   return delete(ctx, handle);
 }
 
+// Локальные (static) функции
+
 /**	----------------------------------------------------------------------------
 	* @brief ??? */
 static int
-	delete(sess_ctx_t *ctx, TaskHandle_t handle) {
+	delete(conn_ctx_t *ctx, TaskHandle_t handle) {
 /*----------------------------------------------------------------------------*/
   // Закрыть ранее открытый сокет нового подключения, Удаляем запись о 
   // подключении, Удаляем задачу
@@ -71,7 +73,7 @@ static int
     lwip_close(ctx->xData.slSock);
   }
   if (ctx->pvDeleted) ctx->pvDeleted(ctx->pvPld);
-  memset(ctx, 0, sizeof(sess_ctx_t));
+  memset(ctx, 0, sizeof(conn_ctx_t));
   ctx->xData.slSock = -1;
 	vTaskDelete(handle);
   return 0;

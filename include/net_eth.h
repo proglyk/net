@@ -7,7 +7,7 @@
 
 /*--Идентификаторы задач отслеживания линка RJ-45 и чтения входящих данных----*/
 
-typedef err_t (*input_ptr_t)(struct pbuf *p, void *pargv/*struct netif *inp*/);
+typedef err_t (*input_ptr_t)(struct pbuf *, void *);
 
 typedef struct {
   input_ptr_t       pscInput;
@@ -18,7 +18,6 @@ typedef struct {
 
 net_eth_t *net_eth__inst(void);
 s32_t net_eth__init(net_eth_t *);
-//s32_t net_eth__is_link_up(net_eth_t *, bool *);
 s32_t net_eth__is_links_up(net_eth_t *, bool *);
 void  net_eth__irq(net_eth_t *);
 void  net_eth__start(net_eth_t *);

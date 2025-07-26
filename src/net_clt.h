@@ -1,3 +1,13 @@
+/**
+	******************************************************************************
+  * @file    net_clt.h
+  * @author  Ilia Proniashin, PJSC Electrovipryamitel
+  * @version V0.31.0
+  * @date    26-Jule-2025
+  * @brief   Implementation of network layer for STM32 platform
+  * @attention The source code is presented as is
+  *****************************************************************************/
+
 #ifndef _NET_CLT_H_
 #define _NET_CLT_H_
 

@@ -1,55 +1,27 @@
 #include "net_srv.h"
 #include "stdlib.h"
 #include "string.h"
-#include "cmsis_os.h"
+#include "userlib.h"
 #include "lwip/def.h"
 #include "lwip/stats.h"
 #include "userint.h"
 
+// Объявление локальных макросов
+
+#define SRV_ADDED(PX)                   PX->slTaskCounter++
+#define RMT_CLT_ADDED(PX)               SRV_ADDED(PX)
+
+// Прототипы локальных (static) функций
+
 static void	 dispatcher( void * );
-static void	 poll( void * );
+static void	 thread_pool( void * );
 static s32_t setup( srv_ctx_t * );
-static void	 remote_client_added(srv_ctx_t *);
-static void  remote_client_deleted_cb(void *);
-static void	 server_added(net_srv_t *);
-static void	 server_deleted_cb(void *);
 static int   delete(srv_ctx_t *ctx);
 static s32_t get_servers_number(net_srv_t *);
+static void	 server_deleted_cb(void *);
+static void  remote_client_deleted_cb(void *);
 
-/**	----------------------------------------------------------------------------
-	* @brief ??? */
-static void
-	server_added(net_srv_t *px) {
-/*----------------------------------------------------------------------------*/
-  px->slTaskCounter++;
-}
-
-/**	----------------------------------------------------------------------------
-	* @brief ??? */
-static void
-	server_deleted_cb(void *pv) {
-/*----------------------------------------------------------------------------*/
-  net_srv_t *px = (net_srv_t *)pv;
-  px->slTaskCounter--;
-}
-
-/**	----------------------------------------------------------------------------
-	* @brief ??? */
-static void
-	remote_client_added(srv_ctx_t *ctx) {
-/*----------------------------------------------------------------------------*/
-  ctx->slTaskCounter++;
-}
-
-/**	----------------------------------------------------------------------------
-	* @brief ??? */
-static void
-	remote_client_deleted_cb(void *pv) {
-/*----------------------------------------------------------------------------*/
-  srv_ctx_t *ctx = (srv_ctx_t *)pv;
-  ctx->slTaskCounter--;
-}
-
+// Публичные (public) функции
 
 /**	----------------------------------------------------------------------------
 	* @brief ??? */
@@ -60,7 +32,7 @@ int
                       "srv_disp", 
                       (3*configMINIMAL_STACK_SIZE), 
                       (void*)px, //FIXME
-                      makeFreeRtosPriority(osPriorityNormal), 
+                      uxGetPriority(PRIO_NORM), 
                       &(px->pvDispHndl) );
 }
 
@@ -149,6 +121,26 @@ void
 	}
 }
 
+// Локальные (static) функции
+
+/**	----------------------------------------------------------------------------
+	* @brief ??? */
+static void
+	server_deleted_cb(void *pv) {
+/*----------------------------------------------------------------------------*/
+  net_srv_t *px = (net_srv_t *)pv;
+  px->slTaskCounter--;
+}
+
+/**	----------------------------------------------------------------------------
+	* @brief ??? */
+static void
+	remote_client_deleted_cb(void *pv) {
+/*----------------------------------------------------------------------------*/
+  srv_ctx_t *ctx = (srv_ctx_t *)pv;
+  ctx->slTaskCounter--;
+}
+
 /**	----------------------------------------------------------------------------
 	* @brief ???
 	* @retval error: Статус выполнения функции. */
@@ -165,7 +157,12 @@ static s32_t
 	return num;
 }
 
-static void dispatcher(void *pv) {
+/**	----------------------------------------------------------------------------
+	* @brief ???
+	* @retval error: Статус выполнения функции. */
+static void
+  dispatcher(void *pv) {
+/*----------------------------------------------------------------------------*/
   BaseType_t rc;
   int status = 0;
   s32_t err;
@@ -185,15 +182,15 @@ static void dispatcher(void *pv) {
           ctx->pvPld = (void *)px;
           ctx->bLatched = 0;
           // запуск отдельной задачи под каждого нового клиента
-          rc = xTaskCreate( poll, 
+          rc = xTaskCreate( thread_pool, 
                             (const char *)ctx->acName,
                             (6*configMINIMAL_STACK_SIZE), 
                             (void *)ctx,
-                            makeFreeRtosPriority(osPriorityNormal), 
+                            uxGetPriority(PRIO_NORM), 
                             &(ctx->handle) );
 					// проверяем статус и выходим из цикла если !pdPASS
 					if (rc == pdPASS) {
-						server_added(px);
+						SRV_ADDED(px);
 					} else {
 						status = -1;
             LWIP_DEBUGF( NET_DEBUG, ("can't create \"%s\", in '%s' /NET/net_srv.c:%d\r\n", 
@@ -221,7 +218,7 @@ static void dispatcher(void *pv) {
 	* @brief  ???
 	* @param  pctl: Указатель на всё */
 static void
-	poll( void *pargv ) {
+	thread_pool( void *pargv ) {
 /*----------------------------------------------------------------------------*/
 	s32_t sock;
 	struct sockaddr_in remote;
@@ -260,11 +257,11 @@ static void
                             name,
                             (6*configMINIMAL_STACK_SIZE), 
                             &(ctx->axRmtClt[ig]),
-                            makeFreeRtosPriority(osPriorityNormal), 
+                            uxGetPriority(PRIO_NORM),
                             &(ctx->axRmtClt[ig].handle) );
           // проверяем статус и выходим из цикла если !pdPASS
 					if (rc == pdPASS) {
-						remote_client_added(ctx);
+						RMT_CLT_ADDED(ctx);
 					} else {
             LWIP_DEBUGF( NET_DEBUG, ("can't create \"%s\", in '%s' /NET/net_srv.c:%d\r\n", 
               (const char *)pcTaskGetName(NULL), __FUNCTION__, __LINE__) );

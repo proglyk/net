@@ -2,7 +2,7 @@
 #include "net_netif.h"
 #include "stdlib.h"
 #include "string.h"
-#include "cmsis_os.h"
+#include "userlib.h"
 #include "lwip/def.h"
 
 // Переменные, константы публичные (public)
@@ -26,7 +26,7 @@ int
                       "clt_disp", 
                       (3*configMINIMAL_STACK_SIZE), 
                       (void*)px, //FIXME
-                      makeFreeRtosPriority(osPriorityNormal), 
+                      uxGetPriority(PRIO_NORM),
                       &(px->pvCltHndl) );
 }
 
@@ -82,7 +82,7 @@ static void
                             (const char *)ctx->acName,
                             (4*configMINIMAL_STACK_SIZE), 
                             (void *)&(ctx->xRmtSrv),
-                            makeFreeRtosPriority(osPriorityNormal),
+                            uxGetPriority(PRIO_NORM),
                             &(ctx->xRmtSrv.handle) );
           if (rc != pdPASS ) {
             status = -1;

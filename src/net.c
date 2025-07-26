@@ -6,16 +6,15 @@
 #include "lwip/ip_addr.h"
 #include "proj_conf.h"
 
+// Переменные локальные (static)
+
+static net_t xNet; // инстанс верхнего 'Net' уровня
+
 // Прототипы локальных (static) функций
 
 static int get_free_pos_srv(net_srv_t *pxSrv);
 static int get_free_pos_clt(net_clt_t *pxClt);
 static void	netif_callback(bool);
-
-// Переменные локальные (static)
-
-static net_t xNet; // инстанс верхнего 'Net' уровня
-
 
 // Публичные (public) функции
 

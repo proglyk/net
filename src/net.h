@@ -28,9 +28,9 @@ typedef struct {
 
 typedef struct {  
   // Диспетчер добавленных к проекту клиентов
-  net_clt_t xClt;
+  net_clt_t    xClt;
   // Диспетчер добавленных к проекту клиентов
-  net_srv_t xSrv;
+  net_srv_t    xSrv;
 } net_t;
 
 

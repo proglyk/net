@@ -2,15 +2,14 @@
 #include "lwip/err.h"
 #include "string.h"
 #include "proj_conf.h"
-//#include "net_user.h"
-
-// Прототипы локальных (static) функций
-
-static struct pbuf *read_bytes(ETH_HandleTypeDef *);
 
 // Переменные, константы публичные (public)
 
 const uint8_t macaddress[6] = MAC_ADDR; // Массив значений сетевого MAC адреса
+
+// Прототипы локальных (static) функций
+
+static struct pbuf *read_bytes(ETH_HandleTypeDef *);
 
 // Переменные, константы локальные (static)
 

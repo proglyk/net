@@ -1,5 +1,5 @@
 #include "net_netif.h"
-#include "cmsis_os.h"
+#include "userlib.h"
 #include "lwip/dhcp.h"
 #include "netif/etharp.h"
 #include "string.h"
@@ -41,7 +41,7 @@ void
                "eth_link", 
                4*configMINIMAL_STACK_SIZE, 
                px, 
-               makeFreeRtosPriority(osPriorityNormal), 
+               uxGetPriority(PRIO_NORM),
                &(px->pvTaskLink) );
 }
 
@@ -272,7 +272,7 @@ static void
                  "EthIf",
                  (2*configMINIMAL_STACK_SIZE),
                  px,
-                 makeFreeRtosPriority(osPriorityRealtime),
+                 uxGetPriority(PRIO_RT),
                  &(px->pvTaskInput) );
 		
 		// 4. запустить периферию

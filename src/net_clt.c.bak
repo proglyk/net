@@ -92,7 +92,7 @@ static void
                             (const char *)ctx->acName,
                             (4*configMINIMAL_STACK_SIZE), 
                             (void *)&(ctx->xRmtSrv),
-                            uxGetPriority(PRIO_IDLE),
+                            uxGetPriority(PRIO_NORM),
                             &(ctx->xRmtSrv.handle) );
           if (rc != pdPASS ) {
             status = -1;

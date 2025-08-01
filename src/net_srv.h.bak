@@ -40,7 +40,6 @@ typedef struct {
   // один стек - один сервер - много подключений (много удаленных клиентов)
   //TaskHandle_t 	apvRmtCltHndl[RMT_CLT_MAX];
   conn_ctx_t   axRmtClt[RMT_CLT_MAX];
-  u8_t         acRmtName[RMT_CLT_MAX][16];
   net_if_fn_t *pxFn;
 } srv_ctx_t;
 

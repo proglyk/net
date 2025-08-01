@@ -261,16 +261,13 @@ static void
           ctx->axRmtClt[ig].xData.slSock = sock;
           ctx->axRmtClt[ig].pvDeleted = (task_cb_fn_t)remote_client_deleted_cb;
 					// даем имя строке
-          strcpy((char *)&ctx->acRmtName[ig][0], (const char *)&ctx->acName[0]);
-          sprintf((char *)&ctx->acRmtName[ig][0] + strlen((const char *)&ctx->acRmtName[ig][0]), "_clt_%01d", ig);
-					//sprintf(name, "clt%02d", ig);
+					sprintf(name, "clt%02d", ig);
 					// запуск отдельной задачи под каждого нового клиента
 					rc = xTaskCreate( net_conn__do,
-                            //name,
-                            (const char *)&ctx->acRmtName[ig][0],
+                            name,
                             (6*configMINIMAL_STACK_SIZE), 
                             &(ctx->axRmtClt[ig]),
-                            uxGetPriority(PRIO_IDLE),
+                            uxGetPriority(PRIO_NORM),
                             &(ctx->axRmtClt[ig].handle) );
           // проверяем статус и выходим из цикла если !pdPASS
 					if (rc == pdPASS) {

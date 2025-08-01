@@ -204,7 +204,7 @@ static void
 			}
 		}
 		// 2. Задержка на период опроса 1000 мсек.
-    //heap_size = xPortGetFreeHeapSize();
+    heap_size = xPortGetFreeHeapSize();
     vTaskDelay(1000);
     //printf("check_link is working");
 	} while (result == 0);

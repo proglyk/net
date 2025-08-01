@@ -15,7 +15,7 @@
 
 // Переменные, константы публичные (public)
 
-const u8_t macaddress[6] = MAC_ADDR; // Массив значений сетевого MAC адреса
+const uint8_t macaddress[6] = MAC_ADDR; // Массив значений сетевого MAC адреса
 
 // Прототипы локальных (static) функций
 

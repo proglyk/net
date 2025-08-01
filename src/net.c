@@ -2,7 +2,7 @@
 	******************************************************************************
   * @file    net.c
   * @author  Ilia Proniashin, PJSC Electrovipryamitel
-  * @version V0.31.0
+  * @version V1.0.0
   * @date    26-Jule-2025
   * @brief   Implementation of network layer for STM32 platform
   * @attention The source code is presented as is

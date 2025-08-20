@@ -1,3 +1,6 @@
 [submodule "third/FreeRTOS"]
 	path = third/FreeRTOS
 	url = https://github.com/proglyk/FreeRTOS
+[submodule "third/LwIP"]
+	path = third/LwIP
+	url = https://github.com/proglyk/LwIP

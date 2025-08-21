@@ -4,9 +4,9 @@
 
 ### Key Components
 
-#### net.c / net.h - the top-level orchestrator
+### net.c / net.h - the top-level orchestrator
 
-Ñontains next functions:
+Contains next functions:
 
 * ```net__init()``` — initializes LwIP (```tcpip_init```) and the network interface (```net_netif__init()``` with link callback).
 
@@ -20,7 +20,7 @@
 
 * ```net__inst()``` — singleton accessor for ```net_t```.
 
-#### net_netif.c / .h - LwIP network interface layer
+### net_netif.c / .h - LwIP network interface layer
 
 Main features:
 
@@ -32,7 +32,7 @@ Main features:
 
 * Link callback notifies ```net.c```; on link changes, flags are updated and servers are closed when the link goes down.
 
-#### net_eth.c / .h — MAC/PHY layer
+### net_eth.c / .h — MAC/PHY layer
 
 Main features:
 
@@ -40,7 +40,7 @@ Main features:
 
 * Works with HAL DMA descriptors.
 
-#### net_srv.c / .h — server side (TCP)
+### net_srv.c / .h — server side (TCP)
 
 Main features:
 
@@ -50,7 +50,7 @@ Main features:
 
 * API includes ```net_srv__enable/disable/is_enabled``` and ```net_srv__delete_all()```.
 
-#### net_clt.c / .h — client side (TCP/UDP)
+### net_clt.c / .h — client side (TCP/UDP)
 
 Main features:
 
@@ -58,7 +58,7 @@ Main features:
 
 * Once connected, starts a task ```net_conn__do``` with client context.
 
-#### net_conn.c / .h — connection/session logic
+### net_conn.c / .h — connection/session logic
 
 Main features:
 
@@ -72,7 +72,7 @@ Main features:
 
 * Protocol behavior is defined by callbacks in ```net_if_fn_t```.
 
-#### net_if.h — contract with the “upper layer”
+### net_if.h — contract with the “upper layer”
 
 Main features:
 

@@ -1,116 +1,114 @@
-### Назначение
+### Purpose
 
-Единый сетевой слой для Cortex-M: поднимает Ethernet/LwIP, ведёт задачи серверов и клиентов, разруливает подключения и разрывы, отдаёт удобное API приложению.
+A unified network layer for Cortex-M: brings up Ethernet/LwIP, runs client and server tasks, manages connections and disconnections, and provides a clean API to the application.
 
-### Ключевые узлы
+### Key Components
 
 <img src="http://github.com/proglyk/net/raw/main/image/diagram_NET_EN.png" width="500" height="305">
 
-#### net.c / net.h - Верхний оркестратор
+#### net.c / net.h - the top-level orchestrator
 
-Содержит функции:
+Сontains next functions:
 
-* net__init() — инициализация LwIP (tcpip_init) и сетевого интерфейса (net_netif__init() с колбэком линка).
+* ```net__init()``` — initializes LwIP (```tcpip_init```) and the network interface (```net_netif__init()``` with link callback).
 
-* net__run() — запуск диспетчеров: клиентов, серверов и input-задачи интерфейса.
+* ```net__run()``` — starts the dispatchers: clients, servers, and the input task of the interface.
 
-* net__add_srv() / net__add_clt() — регистрация серверов/клиентов по структуре net_init_t.
+* ```net__add_srv()``` / ```net__add_clt()``` — register servers/clients using a ```net_init_t``` structure.
 
-* net__input() — сигнал сетевому интерфейсу о новом кадре (разблокирует input-задачу).
+* ```net__input()``` — signals the network interface about a new frame (unblocks the input task).
 
-* net__irq() — проброс IRQ Ethernet-MAC в низкий уровень.
+* ```net__irq()``` — forwards Ethernet MAC interrupts to the low-level driver.
 
-* net__inst() — синглтон net_t.
+* ```net__inst()``` — singleton accessor for ```net_t```.
 
-#### net_netif.c / .h - Слой сетевого интерфейса LwIP
+#### net_netif.c / .h - LwIP network interface layer
 
-Выполнят задачи:
+Main features:
 
-* Создаёт struct netif, настраивает output/input (ETHARP/ethernet_input).
+* Creates a ```struct netif```, sets up ```output```/```input``` (ETHARP/ethernet_input).
 
-* Поддерживает DHCP-клиент.
+* Only static ip addressing supported.
 
-* Задача task_input: ждёт семафор и скармливает кадры стеку (net_eth__input()).
+* Input task waits on a semaphore and feeds frames to the stack (```net_eth__input()```).
 
-* Колбэк линка сообщает в net.c; при смене состояния обновляется флаг для диспетчеров, при down закрываются все серверы
+* Link callback notifies ```net.c```; on link changes, flags are updated and servers are closed when the link goes down.
 
-#### net_eth.c / .h — MAC/PHY
+#### net_eth.c / .h — MAC/PHY layer
 
-Выполнят задачи:
+Main features:
 
-* Инициализация/старт/стоп, IRQ-обслуживание, передача (net_eth__output) и приём (net_eth__input) pbuf-ов.
+* Init/start/stop, IRQ handling, transmit (```net_eth__output```) and receive (```net_eth__input```) pbufs.
 
-* Работа с DMA-дескрипторами HAL
+* Works with HAL DMA descriptors.
 
-#### net_srv.c / .h — серверы (TCP)
+#### net_srv.c / .h — server side (TCP)
 
-Выполнят задачи:
+Main features:
 
-* Диспетчер просматривает список зарегистрированных серверов, при поднятом линке и флаге enable выполняет setup() (создание listening-сокета) и запускает thread_pool.
+* Dispatcher iterates over registered servers; if link is up and enabled, calls ```setup()``` (creates listening socket) and launches ```thread_pool()```.
 
-* thread_pool в цикле делает accept() и на каждого клиента поднимает отдельную FreeRTOS-задачу net_conn__do (до RMT_CLT_MAX штук).
+* ```thread_pool``` loops on ```accept()``` and spawns a FreeRTOS task ```net_conn__do``` for each client (up to ```RMT_CLT_MAX```).
 
-* Есть net_srv__enable/disable/is_enabled и net_srv__delete_all()
+* API includes ```net_srv__enable/disable/is_enabled``` and ```net_srv__delete_all()```.
 
-#### net_clt.c / .h — клиенты (TCP/UDP)
+#### net_clt.c / .h — client side (TCP/UDP)
 
-Выполнят задачи:
+Main features:
 
-* Диспетчер перебирает зарегистрированные клиенты; при поднятом интерфейсе и флаге enable выполняет try_connect() (TCP connect или подготовка UDP).
+* Dispatcher iterates over registered clients; if link is up and enabled, executes ```try_connect()``` (TCP connect or UDP setup).
 
-* После соединения поднимает задачу net_conn__do() с контекстом клиента.
+* Once connected, starts a task ```net_conn__do``` with client context.
 
-#### net_conn.c / .h — логика сессии поверх сокета
+#### net_conn.c / .h — connection/session logic
 
-Выполнят задачи:
+Main features:
 
-* Единый раннер net_conn__do():
+* Core runner net_conn__do():
 
-    1. вызывает ppvSessInit() верхнего уровня и получает пользовательский контекст,
+    1. calls ```ppvSessInit()``` (upper layer session init, returns context),
 
-    2. гоняет основной цикл pslSessDo() (чтение/обработка протокола),
+    2. executes main loop ```pslSessDo()``` (protocol processing),
 
-    3. выполняет pvSessDel() для очистки.
+    3. runs ```pvSessDel()``` for cleanup.
 
-* Таким образом протокол задаётся набором колбэков net_if_fn_t
+* Protocol behavior is defined by callbacks in ```net_if_fn_t```.
 
-#### net_if.h — контракт с «верхом»
+#### net_if.h — contract with the “upper layer”
 
-Выполнят задачи:
+Main features:
 
-* net_if_fn_t: указатели на функции ppvSessInit, pslSessDo, pvSessDel + опциональные колбэки уведомлений.
+* ```net_if_fn_t```: pointers to ```ppvSessInit```, ```pslSessDo```, ```pvSessDel``` + optional notification callbacks.
 
-* net_init_t — единая структура регистрации сервера/клиента: имя, порт, тип сокета (CLT_TCP/CLT_UDP), флаг bEnabled, для клиента — pcRmt (IP), ulId, для сервера — pvTopPld
-
-
-### Конкурентность и события
-
-* FreeRTOS: отдельные задачи — диспетчер серверов, диспетчер клиентов, input-задача интерфейса, задачи сессий по одному на подключение.
-
-* Семафоры/IRQ: прерывание ETH вызывает net__irq(), драйвер сигналит семафор pvSmphrInput, input-задача читает кадр и отдаёт его в LwIP.
-
-* Состояние линка: колбэк в net.c хранит предыдущее состояние, при смене обновляет флаги и гасит все серверы при down.
+* ```net_init_t```: unified registration structure for server/client: name, port, socket type (```CLT_TCP```/```CLT_UDP```), ```bEnabled``` flag, for clients — ```pcRmt``` (IP), ```ulId```, for servers — ```pvTopPld```.
 
 
-### Ограничения/конфигурация
+### Concurrency & Events
 
-* Лимиты по конфигу (proj_conf.h): CLT_NUM_MAX = 4, SRV_NUM_MAX = 4, RMT_CLT_MAX = 4.
+* FreeRTOS: separate tasks for server dispatcher, client dispatcher, interface input task, and one task per connection/session.
 
-* Параметры платы, MAC/IP, выбор цели через #define-ы.
+* Semaphores/IRQ: ETH interrupt triggers ```net__irq()```, driver signals semaphore ```pvSmphrInput```, input task consumes frame and passes it to LwIP.
 
-* При поиске свободного слота сервер/клиент определяется пустым именем в таблице.
-
-
-### Как этим пользоваться (минимум шагов)
-
-1. Вызвать net__init(&net).
-2. Зарегистрировать сервера и/или клиентов через net__add_srv() / net__add_clt() с заполненным net_init_t и своим набором функций net_if_fn_t.
-2. Запустить net__run(&net) — поднимутся диспетчеры и input-поток; дальше стек сам создаёт задачи сессий по мере подключений/соединений.
+* Link state: callback in ```net.c``` tracks previous state, updates flags, and shuts down all servers on down.
 
 
-### Итог
-Модуль net — аккуратная прослойка между аппаратным ETH и прикладным протоколом. Вся специфичная логика протокола выносится в набор функций net_if_fn_t, остальное — управление сокетами, жизненным циклом задач и транспортом.
+### Limits / Configuration
 
-```
-Текст сгенерирован с помощью ChatGPT
-```
+* Config in ```proj_conf.h```: ```CLT_NUM_MAX = 4```, ```SRV_NUM_MAX = 4```, ```RMT_CLT_MAX = 4```.
+
+* Board parameters, MAC/IP, and target choice controlled via ```#define```s.
+
+* Server/client slot availability determined by empty name in the table.
+
+
+### How to Use (minimum steps)
+
+1. Call ```net__init(&net)```.
+2. Register servers/clients with ```net__add_srv()``` / ```net__add_clt()``` using a filled ```net_init_t``` and your own ```net_if_fn_t``` set.
+3. Run ```net__run(&net)``` — dispatchers and input task will start; sessions will spawn automatically as connections are made.
+
+
+### Bottom line
+This module is a clean abstraction layer between raw Ethernet hardware and application protocol logic. All protocol specifics are delegated to a user-defined ```net_if_fn_t``` set, while the framework handles sockets, task lifecycles, and transport management
+
+Generated by ChatGPT

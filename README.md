@@ -12,15 +12,6 @@ A unified network driver for Cortex-M: brings up Ethernet/LwIP, runs client and 
 * Link state: callback in ```net.c``` tracks previous state, updates flags, and shuts down all servers on down.
 
 
-### Limits / Configuration
-
-* Config in ```proj_conf.h```: ```CLT_NUM_MAX = 4```, ```SRV_NUM_MAX = 4```, ```RMT_CLT_MAX = 4```.
-
-* Board parameters, MAC/IP, and target choice controlled via ```#define```s.
-
-* Server/client slot availability determined by empty name in the table.
-
-
 ### How to Use (minimum steps)
 
 1. Call ```net__init(&net)```.

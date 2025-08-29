@@ -28,5 +28,7 @@ A unified network driver for Cortex-M: brings up Ethernet/LwIP, runs client and 
 3. Run ```net__run(&net)``` — dispatchers and input task will start; sessions will spawn automatically as connections are made.
 
 
-### Bottom line
-This driver is a clean abstraction layer between raw Ethernet hardware and application protocol logic. All protocol specifics are delegated to a user-defined ```net_if_fn_t``` set, while the framework handles sockets, task lifecycles, and transport management
+### Roadmap
+* Add a couple of examples (a number are available yet but not prepared)
+* Add wrappers for thread calls and thus get support for various RTOS not only FreeRTOS
+* Do a deep code refactoring and add support of Linux

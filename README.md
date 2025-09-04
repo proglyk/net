@@ -1,3 +1,6 @@
+### State
+Not stable, still under development...
+
 ### Purpose
 
 A unified network driver for Cortex-M: brings up Ethernet/LwIP, runs client and server tasks, manages connections and disconnections, and provides a clean API to the application.
